@@ -1,0 +1,190 @@
+import { Reminder, ReminderGroup, UserStats, Badge } from '../types';
+
+export const mockBadges: Badge[] = [
+  {
+    id: 'b1',
+    name: '첫 완료',
+    description: '첫 리마인더 완료',
+    icon: '🎯',
+    unlockedAt: new Date('2025-10-28'),
+  },
+  {
+    id: 'b2',
+    name: '7일 연속',
+    description: '7일 연속 완료',
+    icon: '🔥',
+    unlockedAt: new Date('2025-11-01'),
+  },
+  {
+    id: 'b3',
+    name: '완벽주의자',
+    description: '주간 완료율 100%',
+    icon: '⭐',
+  },
+  {
+    id: 'b4',
+    name: '장소의 달인',
+    description: '위치 기반 알림 10회 완료',
+    icon: '📍',
+  },
+];
+
+export const mockUserStats: UserStats = {
+  currentStreak: 7,
+  longestStreak: 12,
+  totalCompletions: 45,
+  weeklyCompletionRate: 85,
+  badges: mockBadges,
+};
+
+export const mockReminders: Reminder[] = [
+  {
+    id: 'r1',
+    title: '자동차 보험 서류 준비',
+    description: '11월 15일 만기 전 서류 촬영',
+    icon: '📸',
+    priority: 'urgent',
+    trigger: 'time',
+    time: '09:00',
+    checklist: [
+      { id: 'c1', text: '계기판 사진 촬영', completed: false },
+      { id: 'c2', text: '번호판 사진 촬영', completed: false },
+      { id: 'c3', text: '등록증 사본 준비', completed: false },
+    ],
+    completionCount: 0,
+    totalShown: 3,
+    createdAt: new Date('2025-10-20'),
+  },
+  {
+    id: 'r2',
+    title: '외출 전 확인',
+    description: '집을 나서기 전 안전 체크',
+    icon: '🏠',
+    priority: 'urgent',
+    groupId: 'g1',
+    trigger: 'location',
+    location: {
+      name: '우리집',
+      triggerType: 'leave',
+    },
+    checklist: [
+      { id: 'c4', text: '가스밸브 잠금', completed: false },
+      { id: 'c5', text: '창문 잠금', completed: false },
+      { id: 'c6', text: '불 끄기', completed: false },
+      { id: 'c7', text: '에어컨/히터 끄기', completed: false },
+    ],
+    completionCount: 15,
+    totalShown: 18,
+    lastCompleted: new Date('2025-11-02'),
+    createdAt: new Date('2025-10-10'),
+  },
+  {
+    id: 'r3',
+    title: '업무 시작 전 확인',
+    description: '매일 아침 업무 준비',
+    icon: '💼',
+    priority: 'week',
+    groupId: 'g3',
+    trigger: 'time',
+    time: '08:30',
+    days: [1, 2, 3, 4, 5], // Mon-Fri
+    checklist: [
+      { id: 'c8', text: '오늘 일정 확인', completed: true },
+      { id: 'c9', text: '중요 이메일 체크', completed: true },
+      { id: 'c10', text: '회의 자료 준비', completed: false },
+    ],
+    completionCount: 12,
+    totalShown: 15,
+    lastCompleted: new Date('2025-11-01'),
+    createdAt: new Date('2025-10-15'),
+  },
+  {
+    id: 'r4',
+    title: 'PC방 방문 시 확인',
+    description: 'PC방 퇴실 전 소지품 체크',
+    icon: '🎮',
+    priority: 'week',
+    groupId: 'g2',
+    trigger: 'location',
+    location: {
+      name: 'PC방',
+      triggerType: 'leave',
+    },
+    checklist: [
+      { id: 'c11', text: '우산 챙기기', completed: false },
+      { id: 'c12', text: '지갑 확인', completed: false },
+      { id: 'c13', text: '휴대폰 확인', completed: false },
+      { id: 'c14', text: '이어폰 확인', completed: false },
+    ],
+    completionCount: 5,
+    totalShown: 7,
+    lastCompleted: new Date('2025-10-30'),
+    createdAt: new Date('2025-10-18'),
+  },
+  {
+    id: 'r5',
+    title: '약 복용',
+    description: '매일 저녁 8시',
+    icon: '💊',
+    priority: 'routine',
+    trigger: 'time',
+    time: '20:00',
+    checklist: [
+      { id: 'c15', text: '영양제 복용', completed: false },
+    ],
+    completionCount: 20,
+    totalShown: 22,
+    lastCompleted: new Date('2025-11-02'),
+    createdAt: new Date('2025-10-05'),
+  },
+  {
+    id: 'r6',
+    title: '운동 루틴',
+    description: '주 3회 운동',
+    icon: '🏃',
+    priority: 'routine',
+    trigger: 'time',
+    time: '18:00',
+    days: [1, 3, 5], // Mon, Wed, Fri
+    checklist: [
+      { id: 'c16', text: '스트레칭', completed: false },
+      { id: 'c17', text: '유산소 30분', completed: false },
+      { id: 'c18', text: '근력 운동', completed: false },
+    ],
+    completionCount: 8,
+    totalShown: 10,
+    lastCompleted: new Date('2025-11-01'),
+    createdAt: new Date('2025-10-12'),
+  },
+];
+
+export const mockGroups: ReminderGroup[] = [
+  {
+    id: 'g1',
+    name: '외출 전',
+    icon: '🚪',
+    isPreset: true,
+    reminderIds: ['r2'],
+  },
+  {
+    id: 'g2',
+    name: 'PC방 방문',
+    icon: '🎮',
+    isPreset: true,
+    reminderIds: ['r4'],
+  },
+  {
+    id: 'g3',
+    name: '업무 시작',
+    icon: '💼',
+    isPreset: true,
+    reminderIds: ['r3'],
+  },
+  {
+    id: 'g4',
+    name: '여행 준비',
+    icon: '✈️',
+    isPreset: true,
+    reminderIds: [],
+  },
+];
