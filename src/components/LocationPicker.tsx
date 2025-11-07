@@ -126,7 +126,7 @@ export function LocationPicker({ location, onChange, savedLocations = [] }: Loca
                 key={saved.id}
                 type="button"
                 onClick={() => selectSavedLocation(saved)}
-                className={`p-3 rounded-lg border text-left transition-colors ${
+                className={`p-3 rounded-lg border text-left transition-all active:scale-95 ${
                   location?.latitude === saved.latitude &&
                   location?.longitude === saved.longitude
                     ? 'bg-blue-50 border-blue-300'
@@ -174,7 +174,7 @@ export function LocationPicker({ location, onChange, savedLocations = [] }: Loca
               key={preset.name}
               type="button"
               onClick={() => selectPresetLocation(preset.name)}
-              className={`p-2 rounded-lg border text-center transition-colors ${
+              className={`p-2 rounded-lg border text-center transition-all active:scale-95 ${
                 location?.name === preset.name
                   ? 'bg-blue-50 border-blue-300'
                   : 'hover:bg-gray-50 border-gray-200'
@@ -193,7 +193,7 @@ export function LocationPicker({ location, onChange, savedLocations = [] }: Loca
         variant="outline"
         onClick={getCurrentLocation}
         disabled={isGettingLocation}
-        className="w-full"
+        className="w-full active:scale-95 transition-transform"
       >
         {isGettingLocation ? (
           <>

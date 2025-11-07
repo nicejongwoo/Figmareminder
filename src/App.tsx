@@ -384,7 +384,7 @@ export default function App() {
             <Button
               variant="ghost"
               size="icon"
-              className="h-11 w-11"
+              className="h-11 w-11 active:scale-95 transition-transform"
             >
               <Menu className="h-5 w-5" />
             </Button>
@@ -396,7 +396,7 @@ export default function App() {
             <div className="space-y-2">
               <Button
                 variant="ghost"
-                className="w-full justify-start gap-3 h-14 text-content px-4"
+                className="w-full justify-start gap-3 h-14 text-content px-4 active:scale-98 transition-transform"
                 onClick={() => setImportDialogOpen(true)}
               >
                 <Upload className="h-5 w-5" />
@@ -404,7 +404,7 @@ export default function App() {
               </Button>
               <Button
                 variant="ghost"
-                className="w-full justify-start gap-3 h-14 text-content px-4"
+                className="w-full justify-start gap-3 h-14 text-content px-4 active:scale-98 transition-transform"
                 onClick={() => setLocationSettingsOpen(true)}
               >
                 <MapPin className="h-5 w-5" />
@@ -412,7 +412,7 @@ export default function App() {
               </Button>
               <Button
                 variant="ghost"
-                className="w-full justify-start gap-3 h-14 text-content px-4"
+                className="w-full justify-start gap-3 h-14 text-content px-4 active:scale-98 transition-transform"
               >
                 <Settings className="h-5 w-5" />
                 설정
@@ -423,14 +423,24 @@ export default function App() {
 
         <h1 className="text-title tracking-tight">리마인더</h1>
 
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-11 w-11"
-          onClick={() => setImportDialogOpen(true)}
-        >
-          <Upload className="h-5 w-5" />
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-11 w-11 active:scale-95 transition-transform"
+            onClick={() => setLocationSettingsOpen(true)}
+          >
+            <MapPin className="h-5 w-5" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-11 w-11 active:scale-95 transition-transform"
+            onClick={() => setShareDialogOpen(true)}
+          >
+            <Share2 className="h-5 w-5" />
+          </Button>
+        </div>
       </header>
 
       {/* Main Tabs */}
@@ -443,30 +453,30 @@ export default function App() {
         {/* Home Tab */}
         <TabsContent value="home" className="mt-0">
           {/* Status Bar */}
-          <div className="bg-primary text-white px-6 py-6">
+          <div className="bg-gradient-to-r from-blue-600 to-blue-500 text-white px-6 py-6 shadow-md">
             <div className="flex items-center justify-between max-w-md mx-auto">
               <div className="flex items-center gap-3">
                 <span className="text-3xl">🔥</span>
                 <div>
-                  <p className="text-[14px] font-medium opacity-90">
+                  <p className="text-[14px] font-medium text-white">
                     연속 완료
                   </p>
-                  <p className="text-[22px] font-semibold mt-0.5">
+                  <p className="text-[22px] font-semibold mt-0.5 text-white">
                     {stats.currentStreak}일
                   </p>
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-[14px] font-medium opacity-90">
+                <p className="text-[14px] font-medium text-white">
                   주간 완료율
                 </p>
-                <p className="text-[22px] font-semibold mt-0.5">
+                <p className="text-[22px] font-semibold mt-0.5 text-white">
                   {stats.weeklyCompletionRate}%
                 </p>
               </div>
               <div className="text-right">
-                <p className="text-[14px] font-medium opacity-90">총 완료</p>
-                <p className="text-[22px] font-semibold mt-0.5">
+                <p className="text-[14px] font-medium text-white">총 완료</p>
+                <p className="text-[22px] font-semibold mt-0.5 text-white">
                   {stats.totalCompletions}
                 </p>
               </div>
@@ -475,18 +485,18 @@ export default function App() {
 
           {/* Location Tracking Status */}
           {locationState.isTracking && (
-            <div className="mx-6 mt-6 p-4 bg-blue-50 border border-blue-100 rounded-xl">
+            <div className="mx-6 mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl shadow-sm">
               <div className="flex items-center gap-3">
-                <MapPin className="h-5 w-5 text-primary animate-pulse" />
+                <MapPin className="h-5 w-5 text-blue-600 animate-pulse" />
                 <div className="flex-1">
                   <p className="text-content text-gray-900">위치 추적 중</p>
                   {locationState.accuracy && (
-                    <p className="text-description text-gray-600 mt-1">
+                    <p className="text-description text-gray-700 mt-1">
                       정확도: ±{Math.round(locationState.accuracy)}m
                     </p>
                   )}
                 </div>
-                <Badge variant="secondary" className="text-description">
+                <Badge variant="secondary" className="text-description bg-blue-100 text-blue-900">
                   {reminders.filter(r => 
                     (r.trigger === 'location' || r.trigger === 'both') && 
                     r.location?.latitude
@@ -497,7 +507,7 @@ export default function App() {
           )}
 
           {locationState.error && (
-            <div className="mx-6 mt-6 p-4 bg-red-50 border border-red-100 rounded-xl">
+            <div className="mx-6 mt-6 p-4 bg-gradient-to-r from-red-50 to-orange-50 border border-red-200 rounded-xl shadow-sm">
               <div className="flex items-center gap-3">
                 <MapPin className="h-5 w-5 text-red-600" />
                 <p className="text-content text-red-900">{locationState.error}</p>
@@ -598,7 +608,7 @@ export default function App() {
                 <Button
                   onClick={() => setAddDialogOpen(true)}
                   size="lg"
-                  className="gap-2 h-14 px-8"
+                  className="gap-2 h-14 px-8 active:scale-95 transition-transform"
                 >
                   <Plus className="h-5 w-5" />
                   리마인더 만들기
@@ -631,7 +641,7 @@ export default function App() {
             {/* Home */}
             <button
               onClick={() => setActiveTab("home")}
-              className="flex flex-col items-center gap-1.5 py-2 px-4 min-w-[70px]"
+              className="flex flex-col items-center gap-1.5 py-2 px-4 min-w-[70px] active:scale-95 transition-transform"
             >
               <Home
                 className={`h-5 w-5 ${
@@ -654,7 +664,7 @@ export default function App() {
             {/* Stats */}
             <button
               onClick={() => setActiveTab("stats")}
-              className="flex flex-col items-center gap-1.5 py-2 px-4 min-w-[70px]"
+              className="flex flex-col items-center gap-1.5 py-2 px-4 min-w-[70px] active:scale-95 transition-transform"
             >
               <BarChart3
                 className={`h-5 w-5 ${
@@ -679,7 +689,7 @@ export default function App() {
               onClick={() => setAddDialogOpen(true)}
               className="flex flex-col items-center -mt-8"
             >
-              <div className="bg-primary rounded-full p-4 shadow-lg hover:shadow-xl transition-all active:scale-95">
+              <div className="bg-gradient-to-br from-blue-600 to-blue-500 rounded-full p-4 shadow-lg hover:shadow-xl transition-all active:scale-95">
                 <Plus className="h-8 w-8 text-white" />
               </div>
             </button>
@@ -687,7 +697,7 @@ export default function App() {
             {/* Groups */}
             <button
               onClick={() => setActiveTab("groups")}
-              className="flex flex-col items-center gap-1.5 py-2 px-4 min-w-[70px]"
+              className="flex flex-col items-center gap-1.5 py-2 px-4 min-w-[70px] active:scale-95 transition-transform"
             >
               <Layers
                 className={`h-5 w-5 ${
@@ -714,7 +724,7 @@ export default function App() {
                   description: "설정 화면 (구현 예정)",
                 })
               }
-              className="flex flex-col items-center gap-1.5 py-2 px-4 min-w-[70px]"
+              className="flex flex-col items-center gap-1.5 py-2 px-4 min-w-[70px] active:scale-95 transition-transform"
             >
               <Settings className="h-5 w-5 text-gray-400" />
               <span className="text-description text-gray-400">설정</span>

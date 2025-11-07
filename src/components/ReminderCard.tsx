@@ -26,7 +26,7 @@ export function ReminderCard({ reminder, onToggleChecklistItem, onClick }: Remin
 
   return (
     <Card 
-      className={`border-l-4 ${borderColorMap[reminder.priority]} hover:shadow-md transition-all cursor-pointer bg-white`}
+      className={`border-l-4 ${borderColorMap[reminder.priority]} shadow-sm hover:shadow-lg transition-all cursor-pointer bg-white`}
       onClick={onClick}
     >
       <CardHeader className="pb-4">

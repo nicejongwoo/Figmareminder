@@ -13,7 +13,7 @@ import { Textarea } from './ui/textarea';
 import { Label } from './ui/label';
 import { Badge } from './ui/badge';
 import { Alert, AlertDescription } from './ui/alert';
-import { Upload, FileJson, AlertCircle, Check, Lightbulb } from 'lucide-react';
+import { Upload, FileJson, AlertCircle, Check, Lightbulb, Loader2 } from 'lucide-react';
 import { toast } from 'sonner@2.0.3';
 
 const EXAMPLE_JSON = {
@@ -53,8 +53,16 @@ export function ImportDialog({ open, onOpenChange, onImport }: ImportDialogProps
   const [jsonInput, setJsonInput] = useState('');
   const [previewData, setPreviewData] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isParsing, setIsParsing] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
 
-  const handleParse = () => {
+  const handleParse = async () => {
+    setIsParsing(true);
+    setError(null);
+    
+    // Simulate parsing delay for better UX
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
     try {
       const parsed = JSON.parse(jsonInput);
       
@@ -81,18 +89,25 @@ export function ImportDialog({ open, onOpenChange, onImport }: ImportDialogProps
       
       setPreviewData(parsed);
       setError(null);
-      toast.success('JSON 파싱 성공');
+      toast.success('✓ JSON 파싱 완료');
     } catch (err: any) {
       setError(err.message || 'JSON 파싱 실패');
       setPreviewData(null);
       toast.error('JSON 파싱 실패', {
         description: err.message,
       });
+    } finally {
+      setIsParsing(false);
     }
   };
 
-  const handleImport = () => {
+  const handleImport = async () => {
     if (!previewData) return;
+
+    setIsImporting(true);
+    
+    // Simulate import delay for better UX
+    await new Promise(resolve => setTimeout(resolve, 300));
 
     const reminder: Omit<Reminder, 'id' | 'createdAt' | 'completionCount' | 'totalShown'> = {
       title: previewData.title,
@@ -113,8 +128,8 @@ export function ImportDialog({ open, onOpenChange, onImport }: ImportDialogProps
 
     onImport(reminder);
     handleReset();
+    setIsImporting(false);
     onOpenChange(false);
-    toast.success('리마인더 가져오기 완료');
   };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -133,6 +148,8 @@ export function ImportDialog({ open, onOpenChange, onImport }: ImportDialogProps
     setJsonInput('');
     setPreviewData(null);
     setError(null);
+    setIsParsing(false);
+    setIsImporting(false);
   };
 
   const getPriorityText = (priority: string) => {
@@ -172,7 +189,7 @@ export function ImportDialog({ open, onOpenChange, onImport }: ImportDialogProps
               toast.info('예시 데이터 로드됨');
             }}
             variant="outline"
-            className="w-full gap-2"
+            className="w-full gap-2 active:scale-95 transition-transform"
           >
             <Lightbulb className="h-4 w-4" />
             예시 데이터 불러오기
@@ -192,7 +209,7 @@ export function ImportDialog({ open, onOpenChange, onImport }: ImportDialogProps
               <Button
                 onClick={() => document.getElementById('file-upload')?.click()}
                 variant="outline"
-                className="w-full gap-2"
+                className="w-full gap-2 active:scale-95 transition-transform"
               >
                 <FileJson className="h-4 w-4" />
                 JSON 파일 선택
@@ -216,12 +233,21 @@ export function ImportDialog({ open, onOpenChange, onImport }: ImportDialogProps
           {/* Parse Button */}
           <Button
             onClick={handleParse}
-            disabled={!jsonInput.trim()}
-            className="w-full gap-2"
+            disabled={!jsonInput.trim() || isParsing}
+            className="w-full gap-2 active:scale-95 transition-transform"
             variant="outline"
           >
-            <Check className="h-4 w-4" />
-            데이터 확인
+            {isParsing ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                확인 중...
+              </>
+            ) : (
+              <>
+                <Check className="h-4 w-4" />
+                데이터 확인
+              </>
+            )}
           </Button>
 
           {/* Error Alert */}
@@ -302,11 +328,27 @@ export function ImportDialog({ open, onOpenChange, onImport }: ImportDialogProps
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Button 
+            variant="outline" 
+            onClick={() => onOpenChange(false)}
+            disabled={isImporting}
+            className="active:scale-95 transition-transform"
+          >
             취소
           </Button>
-          <Button onClick={handleImport} disabled={!previewData}>
-            가져오기
+          <Button 
+            onClick={handleImport} 
+            disabled={!previewData || isImporting}
+            className="active:scale-95 transition-transform"
+          >
+            {isImporting ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                가져오는 중...
+              </>
+            ) : (
+              '가져오기'
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>

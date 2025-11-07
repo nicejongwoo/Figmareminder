@@ -78,7 +78,7 @@ export function ReminderDetailView({
     <div className="h-full flex flex-col bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-4 py-4 flex items-center gap-3 sticky top-0 z-10">
-        <Button variant="ghost" size="icon" onClick={onBack} className="h-10 w-10">
+        <Button variant="ghost" size="icon" onClick={onBack} className="h-10 w-10 active:scale-95 transition-transform">
           <ArrowLeft className="h-6 w-6" />
         </Button>
         <span className="text-3xl">{reminder.icon}</span>
@@ -301,7 +301,7 @@ export function ReminderDetailView({
         <div className="max-w-md mx-auto flex gap-3">
           <Button 
             variant="outline" 
-            className="flex-1 gap-2"
+            className="flex-1 gap-2 active:scale-95 transition-transform"
             onClick={onEdit}
           >
             <Edit className="h-4 w-4" />
@@ -310,7 +310,7 @@ export function ReminderDetailView({
 
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="outline" className="flex-1 gap-2 text-red-600 hover:text-red-700">
+              <Button variant="outline" className="flex-1 gap-2 text-red-600 hover:text-red-700 active:scale-95 transition-transform">
                 <Trash2 className="h-4 w-4" />
                 삭제
               </Button>
@@ -323,8 +323,8 @@ export function ReminderDetailView({
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>취소</AlertDialogCancel>
-                <AlertDialogAction onClick={onDelete} className="bg-red-600 hover:bg-red-700">
+                <AlertDialogCancel className="active:scale-95 transition-transform">취소</AlertDialogCancel>
+                <AlertDialogAction onClick={onDelete} className="bg-red-600 hover:bg-red-700 active:scale-95 transition-transform">
                   삭제
                 </AlertDialogAction>
               </AlertDialogFooter>
@@ -333,7 +333,7 @@ export function ReminderDetailView({
 
           <Button 
             variant="outline" 
-            className="flex-1 gap-2"
+            className="flex-1 gap-2 active:scale-95 transition-transform"
             onClick={onShare}
           >
             <Share2 className="h-4 w-4" />

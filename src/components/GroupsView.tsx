@@ -45,7 +45,7 @@ export function GroupsView({ groups, reminders, onGroupClick, onEditGroup }: Gro
             return (
               <Card
                 key={group.id}
-                className="cursor-pointer hover:shadow-md transition-all bg-white border-gray-200"
+                className="cursor-pointer shadow-sm hover:shadow-lg transition-all bg-white border-gray-200"
               >
                 <CardContent className="pt-6 pb-6">
                   <div className="flex items-center justify-between">
@@ -110,7 +110,7 @@ export function GroupsView({ groups, reminders, onGroupClick, onEditGroup }: Gro
               return (
                 <Card
                   key={group.id}
-                  className="cursor-pointer hover:shadow-md transition-all bg-white border-gray-200"
+                  className="cursor-pointer shadow-sm hover:shadow-lg transition-all bg-white border-gray-200"
                 >
                   <CardContent className="pt-6 pb-6">
                     <div className="flex items-center justify-between">
@@ -162,16 +162,16 @@ export function GroupsView({ groups, reminders, onGroupClick, onEditGroup }: Gro
       )}
 
       {/* Info Card */}
-      <Card className="bg-primary/5 border-primary/20">
+      <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200 shadow-sm">
         <CardContent className="pt-6 pb-6">
           <h3 className="text-content mb-3 flex items-center gap-2 text-gray-900">
             💡 그룹이란?
           </h3>
-          <p className="text-description text-gray-600 mb-6 leading-relaxed">
+          <p className="text-description text-gray-700 mb-6 leading-relaxed">
             비슷한 상황의 리마인더들을 묶어서 관리할 수 있습니다. 
             예를 들어 "외출 전" 그룹에는 가스밸브, 창문, 불 확인 등을 포함할 수 있습니다.
           </p>
-          <Button variant="outline" size="lg" className="w-full h-12">
+          <Button variant="outline" size="lg" className="w-full h-12 bg-white hover:bg-gray-50 active:scale-95 transition-transform">
             새 그룹 만들기
           </Button>
         </CardContent>

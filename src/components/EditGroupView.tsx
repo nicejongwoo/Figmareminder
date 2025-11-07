@@ -117,14 +117,14 @@ export function EditGroupView({
             variant="ghost"
             size="icon"
             onClick={onBack}
-            className="h-10 w-10"
+            className="h-10 w-10 active:scale-95 transition-transform"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <Button
             onClick={handleSave}
             disabled={!name.trim()}
-            className="gap-2"
+            className="gap-2 active:scale-95 transition-transform"
           >
             <Check className="h-4 w-4" />
             저장
@@ -184,7 +184,7 @@ export function EditGroupView({
                   key={emoji}
                   type="button"
                   onClick={() => setIcon(emoji)}
-                  className={`text-2xl p-2 rounded-lg hover:bg-gray-100 transition-colors ${
+                  className={`text-2xl p-2 rounded-lg hover:bg-gray-100 transition-all active:scale-95 ${
                     icon === emoji ? 'bg-blue-100 ring-2 ring-blue-500' : ''
                   }`}
                 >

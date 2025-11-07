@@ -69,7 +69,7 @@ export function GroupDetailView({
             variant="ghost"
             size="icon"
             onClick={onBack}
-            className="h-10 w-10"
+            className="h-10 w-10 active:scale-95 transition-transform"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
@@ -79,7 +79,7 @@ export function GroupDetailView({
                 variant="ghost"
                 size="icon"
                 onClick={onEditGroup}
-                className="h-10 w-10"
+                className="h-10 w-10 active:scale-95 transition-transform"
               >
                 <Edit className="h-5 w-5" />
               </Button>
@@ -89,7 +89,7 @@ export function GroupDetailView({
                 variant="ghost"
                 size="icon"
                 onClick={onDeleteGroup}
-                className="h-10 w-10 text-red-600 hover:text-red-700"
+                className="h-10 w-10 text-red-600 hover:text-red-700 active:scale-95 transition-transform"
               >
                 <Trash2 className="h-5 w-5" />
               </Button>
@@ -211,7 +211,7 @@ export function GroupDetailView({
                 이 그룹에 리마인더를 추가해보세요
               </p>
               {onAddReminder && (
-                <Button onClick={onAddReminder} className="gap-2">
+                <Button onClick={onAddReminder} className="gap-2 active:scale-95 transition-transform">
                   <Plus className="h-4 w-4" />
                   리마인더 추가
                 </Button>

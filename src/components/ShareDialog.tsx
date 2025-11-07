@@ -296,7 +296,7 @@ export function ShareDialog({ open, onOpenChange, reminder }: ShareDialogProps) 
             <div className="flex gap-2">
               <Button
                 onClick={() => copyToClipboard(textFormat)}
-                className="flex-1 gap-2"
+                className="flex-1 gap-2 active:scale-95 transition-transform"
                 variant="outline"
               >
                 {copied ? (
@@ -314,7 +314,7 @@ export function ShareDialog({ open, onOpenChange, reminder }: ShareDialogProps) 
               
               <Button
                 onClick={shareViaWebShare}
-                className="flex-1 gap-2"
+                className="flex-1 gap-2 active:scale-95 transition-transform"
               >
                 {canShare ? (
                   <>
@@ -333,6 +333,7 @@ export function ShareDialog({ open, onOpenChange, reminder }: ShareDialogProps) 
                 onClick={() => downloadAsFile(textFormat, `reminder-${reminder.id}.txt`)}
                 variant="outline"
                 size="icon"
+                className="active:scale-95 transition-transform"
               >
                 <Download className="h-4 w-4" />
               </Button>
@@ -356,7 +357,7 @@ export function ShareDialog({ open, onOpenChange, reminder }: ShareDialogProps) 
             <div className="flex gap-2">
               <Button
                 onClick={() => copyToClipboard(jsonFormat)}
-                className="flex-1 gap-2"
+                className="flex-1 gap-2 active:scale-95 transition-transform"
                 variant="outline"
               >
                 {copied ? (
@@ -374,7 +375,7 @@ export function ShareDialog({ open, onOpenChange, reminder }: ShareDialogProps) 
               
               <Button
                 onClick={() => downloadAsFile(jsonFormat, `reminder-${reminder.id}.json`)}
-                className="flex-1 gap-2"
+                className="flex-1 gap-2 active:scale-95 transition-transform"
               >
                 <Download className="h-4 w-4" />
                 다운로드

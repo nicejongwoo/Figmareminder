@@ -356,14 +356,14 @@ export function LocationSettingsView({
       {/* Header */}
       <div className="bg-white border-b px-4 py-4">
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={onBack}>
+          <Button variant="ghost" size="icon" onClick={onBack} className="active:scale-95 transition-transform">
             <X className="h-5 w-5" />
           </Button>
           <div className="flex-1">
             <h2 className="text-lg">저장된 위치 관리</h2>
             <p className="text-sm text-gray-500">자주 사용하는 위치를 저장하세요</p>
           </div>
-          <Button onClick={() => handleOpenDialog()} size="sm" className="gap-2">
+          <Button onClick={() => handleOpenDialog()} size="sm" className="gap-2 active:scale-95 transition-transform">
             <Plus className="h-4 w-4" />
             추가
           </Button>
@@ -379,7 +379,7 @@ export function LocationSettingsView({
             <p className="text-sm text-gray-400 mb-6">
               자주 가는 장소를 저장하면 빠르게 위치 기반 리마인더를 만들 수 있습니다
             </p>
-            <Button onClick={() => handleOpenDialog()} className="gap-2">
+            <Button onClick={() => handleOpenDialog()} className="gap-2 active:scale-95 transition-transform">
               <Plus className="h-4 w-4" />
               첫 위치 추가하기
             </Button>
@@ -405,7 +405,7 @@ export function LocationSettingsView({
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8"
+                        className="h-8 w-8 active:scale-95 transition-transform"
                         onClick={() => handleOpenDialog(location)}
                       >
                         <Edit className="h-4 w-4" />
@@ -413,7 +413,7 @@ export function LocationSettingsView({
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
+                        className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 active:scale-95 transition-transform"
                         onClick={() => handleDelete(location.id, location.name)}
                       >
                         <Trash2 className="h-4 w-4" />
@@ -460,7 +460,7 @@ export function LocationSettingsView({
                     key={emoji}
                     type="button"
                     onClick={() => setIcon(emoji)}
-                    className={`text-2xl p-2 rounded border-2 transition-colors ${
+                    className={`text-2xl p-2 rounded border-2 transition-all active:scale-95 ${
                       icon === emoji
                         ? 'border-blue-500 bg-blue-50'
                         : 'border-gray-200 hover:border-gray-300'
@@ -514,7 +514,7 @@ export function LocationSettingsView({
                   variant="outline"
                   onClick={getCurrentLocation}
                   disabled={isGettingLocation}
-                  className="w-full"
+                  className="w-full active:scale-95 transition-transform"
                 >
                   {isGettingLocation ? (
                     <>
@@ -551,7 +551,7 @@ export function LocationSettingsView({
                   variant="outline"
                   onClick={getCurrentLocation}
                   disabled={isGettingLocation}
-                  className="w-full"
+                  className="w-full active:scale-95 transition-transform"
                 >
                   {isGettingLocation ? (
                     <>
@@ -621,10 +621,10 @@ export function LocationSettingsView({
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>
+            <Button variant="outline" onClick={() => setDialogOpen(false)} className="active:scale-95 transition-transform">
               취소
             </Button>
-            <Button onClick={handleSave}>저장</Button>
+            <Button onClick={handleSave} className="active:scale-95 transition-transform">저장</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

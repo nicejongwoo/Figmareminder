@@ -227,3 +227,27 @@ html {
   font-weight: 600;
   line-height: 1.4;
 }
+
+/* Button Feedback Animations */
+@layer utilities {
+  .btn-feedback {
+    @apply active:scale-95 active:brightness-95 transition-transform duration-75;
+  }
+  
+  .btn-feedback-subtle {
+    @apply active:scale-98 transition-transform duration-75;
+  }
+  
+  @keyframes micro-bounce {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(0.97);
+    }
+  }
+  
+  .click-bounce {
+    animation: micro-bounce 150ms ease-in-out;
+  }
+}

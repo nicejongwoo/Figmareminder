@@ -6,7 +6,7 @@ import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { RadioGroup, RadioGroupItem } from './ui/radio-group';
-import { Plus, X, MapPin, Clock } from 'lucide-react';
+import { Plus, X, MapPin, Clock, Loader2 } from 'lucide-react';
 import { Reminder, ReminderPriority, ReminderTrigger, ChecklistItem, ReminderGroup, Location, SavedLocation } from '../types';
 import { LocationPicker } from './LocationPicker';
 
@@ -34,6 +34,7 @@ export function AddReminderDialog({ open, onOpenChange, onSave, editingReminder,
   const [selectedGroup, setSelectedGroup] = useState<string>('none');
   const [checklist, setChecklist] = useState<Omit<ChecklistItem, 'id'>[]>([]);
   const [newChecklistItem, setNewChecklistItem] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
 
   // Load editing reminder data
   useEffect(() => {
@@ -72,8 +73,13 @@ export function AddReminderDialog({ open, onOpenChange, onSave, editingReminder,
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!title.trim()) return;
+
+    setIsSaving(true);
+    
+    // Simulate async operation for better UX
+    await new Promise(resolve => setTimeout(resolve, 300));
 
     const reminder: Omit<Reminder, 'id' | 'createdAt' | 'completionCount' | 'totalShown'> = {
       title: title.trim(),
@@ -95,6 +101,7 @@ export function AddReminderDialog({ open, onOpenChange, onSave, editingReminder,
     if (!editingReminder) {
       handleReset();
     }
+    setIsSaving(false);
     onOpenChange(false);
   };
 
@@ -114,9 +121,12 @@ export function AddReminderDialog({ open, onOpenChange, onSave, editingReminder,
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto" aria-describedby={undefined}>
+      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{editingReminder ? '리마인더 수정' : '새 리마인더 만들기'}</DialogTitle>
+          <DialogDescription>
+            {editingReminder ? '리마인더 정보를 수정하세요' : '새로운 리마인더를 만들어보세요'}
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
@@ -129,7 +139,7 @@ export function AddReminderDialog({ open, onOpenChange, onSave, editingReminder,
                   key={emoji}
                   type="button"
                   onClick={() => setIcon(emoji)}
-                  className={`text-2xl p-2 rounded border-2 transition-colors ${
+                  className={`text-2xl p-2 rounded border-2 transition-all active:scale-95 ${
                     icon === emoji ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
@@ -237,7 +247,7 @@ export function AddReminderDialog({ open, onOpenChange, onSave, editingReminder,
                       key={index}
                       type="button"
                       onClick={() => toggleDay(index)}
-                      className={`flex-1 py-2 rounded border-2 transition-colors ${
+                      className={`flex-1 py-2 rounded border-2 transition-all active:scale-95 ${
                         selectedDays.includes(index)
                           ? 'border-blue-500 bg-blue-50 text-blue-700'
                           : 'border-gray-200 hover:border-gray-300'
@@ -334,11 +344,27 @@ export function AddReminderDialog({ open, onOpenChange, onSave, editingReminder,
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Button 
+            variant="outline" 
+            onClick={() => onOpenChange(false)}
+            disabled={isSaving}
+            className="active:scale-95 transition-transform"
+          >
             취소
           </Button>
-          <Button onClick={handleSave} disabled={!title.trim()}>
-            저장
+          <Button 
+            onClick={handleSave} 
+            disabled={!title.trim() || isSaving}
+            className="active:scale-95 transition-transform"
+          >
+            {isSaving ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                저장 중...
+              </>
+            ) : (
+              '저장'
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>
