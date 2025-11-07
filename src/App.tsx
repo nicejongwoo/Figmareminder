@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
   Menu,
   Settings,
@@ -10,6 +10,7 @@ import {
   Layers,
   Home,
   Share2,
+  Upload,
 } from "lucide-react";
 import { Button } from "./components/ui/button";
 import {
@@ -32,21 +33,28 @@ import { ReminderDetailView } from "./components/ReminderDetailView";
 import { StatsView } from "./components/StatsView";
 import { GroupsView } from "./components/GroupsView";
 import { GroupDetailView } from "./components/GroupDetailView";
-import { EditGroupDialog } from "./components/EditGroupDialog";
+import { EditGroupView } from "./components/EditGroupView";
+import { ShareDialog } from "./components/ShareDialog";
+import { ImportDialog } from "./components/ImportDialog";
+import { LocationSettingsView } from "./components/LocationSettingsView";
 import {
   mockReminders,
   mockGroups,
   mockUserStats,
+  mockSavedLocations,
 } from "./data/mockData";
-import { Reminder, ChecklistItem, ReminderGroup } from "./types";
+import { Reminder, ChecklistItem, ReminderGroup, SavedLocation } from "./types";
+import { Badge } from "./components/ui/badge";
 import { toast } from "sonner@2.0.3";
 import { Toaster } from "./components/ui/sonner";
+import { useLocationTracking } from "./hooks/useLocationTracking";
 
 export default function App() {
   const [reminders, setReminders] =
     useState<Reminder[]>(mockReminders);
   const [groups, setGroups] = useState(mockGroups);
   const [stats, setStats] = useState(mockUserStats);
+  const [savedLocations, setSavedLocations] = useState<SavedLocation[]>(mockSavedLocations);
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("home");
   const [selectedReminder, setSelectedReminder] =
@@ -59,7 +67,31 @@ export default function App() {
   const [groupDetailSheetOpen, setGroupDetailSheetOpen] = useState(false);
   const [editingGroup, setEditingGroup] =
     useState<ReminderGroup | null>(null);
-  const [editGroupDialogOpen, setEditGroupDialogOpen] = useState(false);
+  const [editGroupSheetOpen, setEditGroupSheetOpen] = useState(false);
+  const [shareDialogOpen, setShareDialogOpen] = useState(false);
+  const [importDialogOpen, setImportDialogOpen] = useState(false);
+  const [locationSettingsOpen, setLocationSettingsOpen] = useState(false);
+
+  // Location tracking
+  const handleLocationTrigger = useCallback((reminder: Reminder) => {
+    const triggerText = reminder.location?.triggerType === 'arrive' 
+      ? '도착했습니다' 
+      : '떠났습니다';
+    
+    toast.info(`📍 ${reminder.icon} ${reminder.title}`, {
+      description: `${reminder.location?.name}에 ${triggerText}`,
+      duration: 5000,
+      action: {
+        label: '보기',
+        onClick: () => {
+          setSelectedReminder(reminder);
+          setDetailSheetOpen(true);
+        },
+      },
+    });
+  }, []);
+
+  const locationState = useLocationTracking(reminders, handleLocationTrigger);
 
   const urgentReminders = reminders.filter(
     (r) => r.priority === "urgent",
@@ -72,10 +104,18 @@ export default function App() {
   );
 
   // Update selectedReminder when reminders change
+  const selectedReminderIdRef = useRef<string | null>(null);
+  
   useEffect(() => {
     if (selectedReminder) {
+      selectedReminderIdRef.current = selectedReminder.id;
+    }
+  }, [selectedReminder]);
+
+  useEffect(() => {
+    if (selectedReminderIdRef.current) {
       const updatedReminder = reminders.find(
-        (r) => r.id === selectedReminder.id,
+        (r) => r.id === selectedReminderIdRef.current,
       );
       if (updatedReminder) {
         setSelectedReminder(updatedReminder);
@@ -218,15 +258,30 @@ export default function App() {
 
   const handleShareReminder = () => {
     if (!selectedReminder) return;
+    setShareDialogOpen(true);
+  };
 
-    toast.info("📤 공유", {
-      description: "리마인더 공유 기능 (구현 예정)",
+  const handleImportReminder = (
+    reminder: Omit<Reminder, 'id' | 'createdAt' | 'completionCount' | 'totalShown'>
+  ) => {
+    const newReminder: Reminder = {
+      ...reminder,
+      id: `r${Date.now()}`,
+      completionCount: 0,
+      totalShown: 0,
+      createdAt: new Date(),
+    };
+
+    setReminders((prev) => [...prev, newReminder]);
+    toast.success("✅ 리마인더 추가됨", {
+      description: `"${newReminder.title}" 리마인더가 추가되었습니다.`,
     });
   };
 
   const handleEditGroup = (group: ReminderGroup) => {
     setEditingGroup(group);
-    setEditGroupDialogOpen(true);
+    setGroupDetailSheetOpen(false);
+    setEditGroupSheetOpen(true);
   };
 
   const handleSaveGroup = (
@@ -294,80 +349,88 @@ export default function App() {
     setSelectedGroupId(null);
   };
 
+  const handleAddLocation = (
+    location: Omit<SavedLocation, 'id' | 'createdAt'>
+  ) => {
+    const newLocation: SavedLocation = {
+      ...location,
+      id: `loc-${Date.now()}`,
+      createdAt: new Date(),
+    };
+    setSavedLocations((prev) => [...prev, newLocation]);
+  };
+
+  const handleUpdateLocation = (
+    id: string,
+    location: Omit<SavedLocation, 'id' | 'createdAt'>
+  ) => {
+    setSavedLocations((prev) =>
+      prev.map((l) => (l.id === id ? { ...l, ...location } : l))
+    );
+  };
+
+  const handleDeleteLocation = (id: string) => {
+    setSavedLocations((prev) => prev.filter((l) => l.id !== id));
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen bg-white pb-24">
       <Toaster />
 
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-4 py-4 flex items-center justify-between sticky top-0 z-10 shadow-sm">
+      <header className="bg-white border-b border-gray-200 px-6 py-5 flex items-center justify-between sticky top-0 z-10">
         <Sheet>
           <SheetTrigger asChild>
             <Button
               variant="ghost"
               size="icon"
-              className="h-10 w-10"
+              className="h-11 w-11"
             >
-              <Menu className="h-6 w-6" />
+              <Menu className="h-5 w-5" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="left">
-            <SheetHeader>
-              <SheetTitle>메뉴</SheetTitle>
+          <SheetContent side="left" className="w-80">
+            <SheetHeader className="mb-8">
+              <SheetTitle className="text-title text-left">메뉴</SheetTitle>
             </SheetHeader>
-            <div className="py-6 space-y-4">
+            <div className="space-y-2">
               <Button
                 variant="ghost"
-                className="w-full justify-start gap-2"
+                className="w-full justify-start gap-3 h-14 text-content px-4"
+                onClick={() => setImportDialogOpen(true)}
               >
-                <Settings className="h-5 w-5" />
-                설정
+                <Upload className="h-5 w-5" />
+                리마인더 가져오기
               </Button>
               <Button
                 variant="ghost"
-                className="w-full justify-start gap-2"
-              >
-                <Users className="h-5 w-5" />
-                프로필
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-full justify-start gap-2"
+                className="w-full justify-start gap-3 h-14 text-content px-4"
+                onClick={() => setLocationSettingsOpen(true)}
               >
                 <MapPin className="h-5 w-5" />
                 위치 관리
+              </Button>
+              <Button
+                variant="ghost"
+                className="w-full justify-start gap-3 h-14 text-content px-4"
+              >
+                <Settings className="h-5 w-5" />
+                설정
               </Button>
             </div>
           </SheetContent>
         </Sheet>
 
-        <h1 className="tracking-wider">REMINDER</h1>
+        <h1 className="text-title tracking-tight">리마인더</h1>
 
-        <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-10 w-10"
-            onClick={() =>
-              toast.info("📍 위치 기반 알림", {
-                description: "위치 설정 (구현 예정)",
-              })
-            }
-          >
-            <MapPin className="h-5 w-5" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-10 w-10"
-            onClick={() =>
-              toast.info("📤 공유", {
-                description: "리마인더 공유 (구현 예정)",
-              })
-            }
-          >
-            <Share2 className="h-5 w-5" />
-          </Button>
-        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-11 w-11"
+          onClick={() => setImportDialogOpen(true)}
+        >
+          <Upload className="h-5 w-5" />
+        </Button>
       </header>
 
       {/* Main Tabs */}
@@ -380,44 +443,76 @@ export default function App() {
         {/* Home Tab */}
         <TabsContent value="home" className="mt-0">
           {/* Status Bar */}
-          <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="text-2xl">🔥</span>
+          <div className="bg-primary text-white px-6 py-6">
+            <div className="flex items-center justify-between max-w-md mx-auto">
+              <div className="flex items-center gap-3">
+                <span className="text-3xl">🔥</span>
                 <div>
-                  <p className="text-xs opacity-80">
+                  <p className="text-[14px] font-medium opacity-90">
                     연속 완료
                   </p>
-                  <p className="text-xl">
+                  <p className="text-[22px] font-semibold mt-0.5">
                     {stats.currentStreak}일
                   </p>
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-xs opacity-80">
+                <p className="text-[14px] font-medium opacity-90">
                   주간 완료율
                 </p>
-                <p className="text-xl">
+                <p className="text-[22px] font-semibold mt-0.5">
                   {stats.weeklyCompletionRate}%
                 </p>
               </div>
               <div className="text-right">
-                <p className="text-xs opacity-80">총 완료</p>
-                <p className="text-xl">
+                <p className="text-[14px] font-medium opacity-90">총 완료</p>
+                <p className="text-[22px] font-semibold mt-0.5">
                   {stats.totalCompletions}
                 </p>
               </div>
             </div>
           </div>
 
+          {/* Location Tracking Status */}
+          {locationState.isTracking && (
+            <div className="mx-6 mt-6 p-4 bg-blue-50 border border-blue-100 rounded-xl">
+              <div className="flex items-center gap-3">
+                <MapPin className="h-5 w-5 text-primary animate-pulse" />
+                <div className="flex-1">
+                  <p className="text-content text-gray-900">위치 추적 중</p>
+                  {locationState.accuracy && (
+                    <p className="text-description text-gray-600 mt-1">
+                      정확도: ±{Math.round(locationState.accuracy)}m
+                    </p>
+                  )}
+                </div>
+                <Badge variant="secondary" className="text-description">
+                  {reminders.filter(r => 
+                    (r.trigger === 'location' || r.trigger === 'both') && 
+                    r.location?.latitude
+                  ).length}개
+                </Badge>
+              </div>
+            </div>
+          )}
+
+          {locationState.error && (
+            <div className="mx-6 mt-6 p-4 bg-red-50 border border-red-100 rounded-xl">
+              <div className="flex items-center gap-3">
+                <MapPin className="h-5 w-5 text-red-600" />
+                <p className="text-content text-red-900">{locationState.error}</p>
+              </div>
+            </div>
+          )}
+
           {/* Main Content */}
-          <main className="px-4 py-6 space-y-6">
+          <main className="px-6 py-8 space-y-10 max-w-md mx-auto">
             {/* URGENT Section */}
             {urgentReminders.length > 0 && (
               <section>
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="text-xl">🔴</span>
-                  <h2 className="text-gray-600">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-2xl">🔴</span>
+                  <h2 className="text-title text-gray-900">
                     긴급 ({urgentReminders.length})
                   </h2>
                 </div>
@@ -441,9 +536,9 @@ export default function App() {
             {/* DUE THIS WEEK Section */}
             {weekReminders.length > 0 && (
               <section>
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="text-xl">🟡</span>
-                  <h2 className="text-gray-600">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-2xl">🟡</span>
+                  <h2 className="text-title text-gray-900">
                     이번 주 ({weekReminders.length})
                   </h2>
                 </div>
@@ -467,9 +562,9 @@ export default function App() {
             {/* ROUTINE Section */}
             {routineReminders.length > 0 && (
               <section>
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="text-xl">🟢</span>
-                  <h2 className="text-gray-600">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-2xl">🟢</span>
+                  <h2 className="text-title text-gray-900">
                     루틴 ({routineReminders.length})
                   </h2>
                 </div>
@@ -492,18 +587,18 @@ export default function App() {
 
             {/* Empty State */}
             {reminders.length === 0 && (
-              <div className="text-center py-12">
-                <p className="text-4xl mb-4">📝</p>
-                <p className="text-xl mb-2">
+              <div className="text-center py-16">
+                <p className="text-5xl mb-6">📝</p>
+                <p className="text-title mb-3">
                   리마인더가 없습니다
                 </p>
-                <p className="text-gray-500 mb-6">
+                <p className="text-description text-gray-600 mb-8">
                   아래 버튼을 눌러 첫 리마인더를 만들어보세요!
                 </p>
                 <Button
                   onClick={() => setAddDialogOpen(true)}
                   size="lg"
-                  className="gap-2"
+                  className="gap-2 h-14 px-8"
                 >
                   <Plus className="h-5 w-5" />
                   리마인더 만들기
@@ -514,12 +609,12 @@ export default function App() {
         </TabsContent>
 
         {/* Stats Tab */}
-        <TabsContent value="stats" className="mt-0 px-4 py-6">
+        <TabsContent value="stats" className="mt-0 px-6 py-8 max-w-md mx-auto">
           <StatsView stats={stats} />
         </TabsContent>
 
         {/* Groups Tab */}
-        <TabsContent value="groups" className="mt-0 px-4 py-6">
+        <TabsContent value="groups" className="mt-0 px-6 py-8 max-w-md mx-auto">
           <GroupsView
             groups={groups}
             reminders={reminders}
@@ -530,26 +625,26 @@ export default function App() {
       </Tabs>
 
       {/* Bottom Navigation Bar */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg">
+      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200">
         <div className="max-w-md mx-auto relative">
-          <div className="flex items-center justify-around px-4 pb-4 pt-2">
+          <div className="flex items-center justify-around px-4 pb-safe pt-3">
             {/* Home */}
             <button
               onClick={() => setActiveTab("home")}
-              className="flex flex-col items-center gap-1 py-2 px-4 min-w-[60px]"
+              className="flex flex-col items-center gap-1.5 py-2 px-4 min-w-[70px]"
             >
               <Home
-                className={`h-6 w-6 ${
+                className={`h-5 w-5 ${
                   activeTab === "home"
-                    ? "text-blue-600"
-                    : "text-gray-500"
+                    ? "text-primary"
+                    : "text-gray-400"
                 }`}
               />
               <span
-                className={`text-xs ${
+                className={`text-description ${
                   activeTab === "home"
-                    ? "text-blue-600"
-                    : "text-gray-500"
+                    ? "text-primary"
+                    : "text-gray-400"
                 }`}
               >
                 홈
@@ -559,20 +654,20 @@ export default function App() {
             {/* Stats */}
             <button
               onClick={() => setActiveTab("stats")}
-              className="flex flex-col items-center gap-1 py-2 px-4 min-w-[60px]"
+              className="flex flex-col items-center gap-1.5 py-2 px-4 min-w-[70px]"
             >
               <BarChart3
-                className={`h-6 w-6 ${
+                className={`h-5 w-5 ${
                   activeTab === "stats"
-                    ? "text-blue-600"
-                    : "text-gray-500"
+                    ? "text-primary"
+                    : "text-gray-400"
                 }`}
               />
               <span
-                className={`text-xs ${
+                className={`text-description ${
                   activeTab === "stats"
-                    ? "text-blue-600"
-                    : "text-gray-500"
+                    ? "text-primary"
+                    : "text-gray-400"
                 }`}
               >
                 통계
@@ -584,7 +679,7 @@ export default function App() {
               onClick={() => setAddDialogOpen(true)}
               className="flex flex-col items-center -mt-8"
             >
-              <div className="bg-gradient-to-br from-blue-600 to-purple-600 rounded-full p-4 shadow-lg hover:shadow-xl transition-shadow">
+              <div className="bg-primary rounded-full p-4 shadow-lg hover:shadow-xl transition-all active:scale-95">
                 <Plus className="h-8 w-8 text-white" />
               </div>
             </button>
@@ -592,20 +687,20 @@ export default function App() {
             {/* Groups */}
             <button
               onClick={() => setActiveTab("groups")}
-              className="flex flex-col items-center gap-1 py-2 px-4 min-w-[60px]"
+              className="flex flex-col items-center gap-1.5 py-2 px-4 min-w-[70px]"
             >
               <Layers
-                className={`h-6 w-6 ${
+                className={`h-5 w-5 ${
                   activeTab === "groups"
-                    ? "text-blue-600"
-                    : "text-gray-500"
+                    ? "text-primary"
+                    : "text-gray-400"
                 }`}
               />
               <span
-                className={`text-xs ${
+                className={`text-description ${
                   activeTab === "groups"
-                    ? "text-blue-600"
-                    : "text-gray-500"
+                    ? "text-primary"
+                    : "text-gray-400"
                 }`}
               >
                 그룹
@@ -619,10 +714,10 @@ export default function App() {
                   description: "설정 화면 (구현 예정)",
                 })
               }
-              className="flex flex-col items-center gap-1 py-2 px-4 min-w-[60px]"
+              className="flex flex-col items-center gap-1.5 py-2 px-4 min-w-[70px]"
             >
-              <Settings className="h-6 w-6 text-gray-500" />
-              <span className="text-xs text-gray-500">설정</span>
+              <Settings className="h-5 w-5 text-gray-400" />
+              <span className="text-description text-gray-400">설정</span>
             </button>
           </div>
         </div>
@@ -640,6 +735,7 @@ export default function App() {
         onSave={handleAddReminder}
         editingReminder={editingReminder}
         groups={groups}
+        savedLocations={savedLocations}
       />
 
       {/* Reminder Detail Sheet */}
@@ -727,14 +823,70 @@ export default function App() {
         </SheetContent>
       </Sheet>
 
-      {/* Edit Group Dialog */}
-      <EditGroupDialog
-        open={editGroupDialogOpen}
-        onOpenChange={setEditGroupDialogOpen}
-        group={editingGroup}
-        reminders={reminders}
-        onSave={handleSaveGroup}
+      {/* Edit Group Sheet */}
+      <Sheet
+        open={editGroupSheetOpen}
+        onOpenChange={setEditGroupSheetOpen}
+      >
+        <SheetContent
+          side="right"
+          className="w-full sm:max-w-md p-0"
+        >
+          <SheetHeader className="sr-only">
+            <SheetTitle>그룹 편집</SheetTitle>
+            <SheetDescription>
+              그룹 정보 수정 및 리마인더 관리
+            </SheetDescription>
+          </SheetHeader>
+          {editingGroup && (
+            <EditGroupView
+              group={editingGroup}
+              reminders={reminders}
+              onBack={() => setEditGroupSheetOpen(false)}
+              onSave={handleSaveGroup}
+            />
+          )}
+        </SheetContent>
+      </Sheet>
+
+      {/* Share Dialog */}
+      <ShareDialog
+        open={shareDialogOpen}
+        onOpenChange={setShareDialogOpen}
+        reminder={selectedReminder}
       />
+
+      {/* Import Dialog */}
+      <ImportDialog
+        open={importDialogOpen}
+        onOpenChange={setImportDialogOpen}
+        onImport={handleImportReminder}
+      />
+
+      {/* Location Settings Sheet */}
+      <Sheet
+        open={locationSettingsOpen}
+        onOpenChange={setLocationSettingsOpen}
+      >
+        <SheetContent
+          side="right"
+          className="w-full sm:max-w-md p-0"
+        >
+          <SheetHeader className="sr-only">
+            <SheetTitle>위치 관리</SheetTitle>
+            <SheetDescription>
+              자주 사용하는 위치를 저장하고 관리합니다
+            </SheetDescription>
+          </SheetHeader>
+          <LocationSettingsView
+            savedLocations={savedLocations}
+            onAddLocation={handleAddLocation}
+            onUpdateLocation={handleUpdateLocation}
+            onDeleteLocation={handleDeleteLocation}
+            onBack={() => setLocationSettingsOpen(false)}
+          />
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }

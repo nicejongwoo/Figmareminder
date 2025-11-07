@@ -6,10 +6,9 @@ import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { RadioGroup, RadioGroupItem } from './ui/radio-group';
-import { Slider } from './ui/slider';
-import { Badge } from './ui/badge';
-import { Plus, X, MapPin, Clock, Map } from 'lucide-react';
-import { Reminder, ReminderPriority, ReminderTrigger, ChecklistItem, ReminderGroup } from '../types';
+import { Plus, X, MapPin, Clock } from 'lucide-react';
+import { Reminder, ReminderPriority, ReminderTrigger, ChecklistItem, ReminderGroup, Location, SavedLocation } from '../types';
+import { LocationPicker } from './LocationPicker';
 
 interface AddReminderDialogProps {
   open: boolean;
@@ -17,12 +16,13 @@ interface AddReminderDialogProps {
   onSave: (reminder: Omit<Reminder, 'id' | 'createdAt' | 'completionCount' | 'totalShown'>) => void;
   editingReminder?: Reminder | null;
   groups?: ReminderGroup[];
+  savedLocations?: SavedLocation[];
 }
 
 const EMOJI_OPTIONS = ['📸', '🏠', '💼', '🎮', '💊', '🏃', '🚗', '✈️', '🍔', '📚', '🎵', '🛒'];
 const DAYS = ['일', '월', '화', '수', '목', '금', '토'];
 
-export function AddReminderDialog({ open, onOpenChange, onSave, editingReminder, groups = [] }: AddReminderDialogProps) {
+export function AddReminderDialog({ open, onOpenChange, onSave, editingReminder, groups = [], savedLocations = [] }: AddReminderDialogProps) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [icon, setIcon] = useState('📌');
@@ -30,9 +30,7 @@ export function AddReminderDialog({ open, onOpenChange, onSave, editingReminder,
   const [trigger, setTrigger] = useState<ReminderTrigger>('time');
   const [time, setTime] = useState('09:00');
   const [selectedDays, setSelectedDays] = useState<number[]>([]);
-  const [locationName, setLocationName] = useState('');
-  const [locationTrigger, setLocationTrigger] = useState<'arrive' | 'leave'>('leave');
-  const [locationRadius, setLocationRadius] = useState(500);
+  const [location, setLocation] = useState<Location | undefined>(undefined);
   const [selectedGroup, setSelectedGroup] = useState<string>('none');
   const [checklist, setChecklist] = useState<Omit<ChecklistItem, 'id'>[]>([]);
   const [newChecklistItem, setNewChecklistItem] = useState('');
@@ -47,9 +45,7 @@ export function AddReminderDialog({ open, onOpenChange, onSave, editingReminder,
       setTrigger(editingReminder.trigger);
       setTime(editingReminder.time || '09:00');
       setSelectedDays(editingReminder.days || []);
-      setLocationName(editingReminder.location?.name || '');
-      setLocationTrigger(editingReminder.location?.triggerType || 'leave');
-      setLocationRadius(editingReminder.location?.radius || 500);
+      setLocation(editingReminder.location);
       setSelectedGroup(editingReminder.groupId || 'none');
       setChecklist(editingReminder.checklist.map(item => ({ text: item.text, completed: item.completed })));
     } else {
@@ -87,9 +83,7 @@ export function AddReminderDialog({ open, onOpenChange, onSave, editingReminder,
       trigger,
       time: trigger === 'time' || trigger === 'both' ? time : undefined,
       days: selectedDays.length > 0 ? selectedDays : undefined,
-      location: trigger === 'location' || trigger === 'both' 
-        ? { name: locationName, triggerType: locationTrigger, radius: locationRadius }
-        : undefined,
+      location: (trigger === 'location' || trigger === 'both') ? location : undefined,
       groupId: selectedGroup !== 'none' ? selectedGroup : undefined,
       checklist: checklist.map((item, index) => ({
         id: editingReminder?.checklist[index]?.id || `temp-${Date.now()}-${index}`,
@@ -112,9 +106,7 @@ export function AddReminderDialog({ open, onOpenChange, onSave, editingReminder,
     setTrigger('time');
     setTime('09:00');
     setSelectedDays([]);
-    setLocationName('');
-    setLocationTrigger('leave');
-    setLocationRadius(500);
+    setLocation(undefined);
     setSelectedGroup('none');
     setChecklist([]);
     setNewChecklistItem('');
@@ -264,72 +256,13 @@ export function AddReminderDialog({ open, onOpenChange, onSave, editingReminder,
 
           {/* Location Settings */}
           {(trigger === 'location' || trigger === 'both') && (
-            <>
-              <div className="space-y-2">
-                <Label htmlFor="location">장소 이름</Label>
-                <div className="flex gap-2">
-                  <MapPin className="h-5 w-5 text-gray-400 mt-2" />
-                  <Input
-                    id="location"
-                    value={locationName}
-                    onChange={(e) => setLocationName(e.target.value)}
-                    placeholder="예: 우리집, PC방"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label>알림 시점</Label>
-                <div className="flex gap-2">
-                  <Button
-                    type="button"
-                    variant={locationTrigger === 'arrive' ? 'default' : 'outline'}
-                    onClick={() => setLocationTrigger('arrive')}
-                    className="flex-1"
-                  >
-                    도착 시
-                  </Button>
-                  <Button
-                    type="button"
-                    variant={locationTrigger === 'leave' ? 'default' : 'outline'}
-                    onClick={() => setLocationTrigger('leave')}
-                    className="flex-1"
-                  >
-                    떠날 때
-                  </Button>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="location-radius">반경</Label>
-                  <span className="text-sm">{locationRadius}m</span>
-                </div>
-                <Slider
-                  id="location-radius"
-                  min={50}
-                  max={2000}
-                  step={50}
-                  value={[locationRadius]}
-                  onValueChange={(value) => setLocationRadius(value[0])}
-                  className="w-full"
-                />
-                <div className="flex justify-between text-xs text-gray-500">
-                  <span>50m</span>
-                  <span>2000m</span>
-                </div>
-              </div>
-
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full gap-2"
-                onClick={() => {}}
-              >
-                <Map className="h-4 w-4" />
-                지도에서 위치 선택 (구현 예정)
-              </Button>
-            </>
+            <div className="p-4 border rounded-lg bg-gray-50">
+              <LocationPicker
+                location={location}
+                onChange={setLocation}
+                savedLocations={savedLocations}
+              />
+            </div>
           )}
 
           {/* Checklist */}

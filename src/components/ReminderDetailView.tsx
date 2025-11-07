@@ -149,6 +149,16 @@ export function ReminderDetailView({
                         ({reminder.location.triggerType === 'leave' ? '떠날 때' : '도착 시'})
                       </span>
                     </p>
+                    {reminder.location.radius && (
+                      <p className="text-xs text-gray-500 mt-1">
+                        감지 반경: {reminder.location.radius}m
+                      </p>
+                    )}
+                    {reminder.location.latitude && reminder.location.longitude && (
+                      <p className="text-xs text-gray-400 mt-1">
+                        위도: {reminder.location.latitude.toFixed(6)}, 경도: {reminder.location.longitude.toFixed(6)}
+                      </p>
+                    )}
                   </div>
                 </div>
               )}

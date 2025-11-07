@@ -1,0 +1,22 @@
+{
+  "title": "약 복용",
+  "description": "매일 저녁 8시 영양제 복용",
+  "icon": "💊",
+  "priority": "routine",
+  "trigger": "time",
+  "time": "20:00",
+  "checklist": [
+    {
+      "text": "비타민 C 복용",
+      "completed": false
+    },
+    {
+      "text": "오메가3 복용",
+      "completed": false
+    },
+    {
+      "text": "종합비타민 복용",
+      "completed": false
+    }
+  ]
+}

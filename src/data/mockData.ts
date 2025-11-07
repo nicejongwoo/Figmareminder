@@ -1,4 +1,4 @@
-import { Reminder, ReminderGroup, UserStats, Badge } from '../types';
+import { Reminder, ReminderGroup, UserStats, Badge, SavedLocation } from '../types';
 
 export const mockBadges: Badge[] = [
   {
@@ -65,6 +65,9 @@ export const mockReminders: Reminder[] = [
     trigger: 'location',
     location: {
       name: '우리집',
+      latitude: 37.5665,
+      longitude: 126.9780,
+      radius: 100,
       triggerType: 'leave',
     },
     checklist: [
@@ -108,6 +111,9 @@ export const mockReminders: Reminder[] = [
     trigger: 'location',
     location: {
       name: 'PC방',
+      latitude: 37.5172,
+      longitude: 127.0473,
+      radius: 80,
       triggerType: 'leave',
     },
     checklist: [
@@ -186,5 +192,48 @@ export const mockGroups: ReminderGroup[] = [
     icon: '✈️',
     isPreset: true,
     reminderIds: [],
+  },
+];
+
+export const mockSavedLocations: SavedLocation[] = [
+  {
+    id: 'loc-1',
+    name: '우리 집',
+    icon: '🏠',
+    latitude: 37.5665,
+    longitude: 126.9780,
+    radius: 100,
+    address: '서울시 중구 세종대로',
+    createdAt: new Date('2025-10-01'),
+  },
+  {
+    id: 'loc-2',
+    name: '회사',
+    icon: '💼',
+    latitude: 37.4979,
+    longitude: 127.0276,
+    radius: 150,
+    address: '서울시 강남구 테헤란로',
+    createdAt: new Date('2025-10-01'),
+  },
+  {
+    id: 'loc-3',
+    name: '단골 PC방',
+    icon: '🎮',
+    latitude: 37.5172,
+    longitude: 127.0473,
+    radius: 80,
+    address: '서울시 강남구 역삼동',
+    createdAt: new Date('2025-10-10'),
+  },
+  {
+    id: 'loc-4',
+    name: '헬스장',
+    icon: '🏋️',
+    latitude: 37.5233,
+    longitude: 126.9289,
+    radius: 100,
+    address: '서울시 영등포구',
+    createdAt: new Date('2025-10-15'),
   },
 ];

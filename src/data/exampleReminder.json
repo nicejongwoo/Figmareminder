@@ -1,0 +1,30 @@
+{
+  "title": "외출 전 확인",
+  "description": "집을 나서기 전 안전 체크",
+  "icon": "🏠",
+  "priority": "urgent",
+  "trigger": "location",
+  "location": {
+    "name": "우리집",
+    "triggerType": "leave",
+    "radius": 100
+  },
+  "checklist": [
+    {
+      "text": "가스밸브 잠금",
+      "completed": false
+    },
+    {
+      "text": "창문 잠금",
+      "completed": false
+    },
+    {
+      "text": "불 끄기",
+      "completed": false
+    },
+    {
+      "text": "에어컨/히터 끄기",
+      "completed": false
+    }
+  ]
+}

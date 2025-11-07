@@ -65,3 +65,14 @@ export interface Badge {
   icon: string;
   unlockedAt?: Date;
 }
+
+export interface SavedLocation {
+  id: string;
+  name: string;
+  icon: string;
+  latitude: number;
+  longitude: number;
+  radius: number;
+  address?: string;
+  createdAt: Date;
+}

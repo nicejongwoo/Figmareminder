@@ -1,0 +1,32 @@
+{
+  "title": "업무 시작 전 확인",
+  "description": "매일 아침 회사 도착 시 업무 준비",
+  "icon": "💼",
+  "priority": "week",
+  "trigger": "both",
+  "time": "09:00",
+  "days": [1, 2, 3, 4, 5],
+  "location": {
+    "name": "회사",
+    "triggerType": "arrive",
+    "radius": 200
+  },
+  "checklist": [
+    {
+      "text": "오늘 일정 확인",
+      "completed": false
+    },
+    {
+      "text": "중요 이메일 체크",
+      "completed": false
+    },
+    {
+      "text": "회의 자료 준비",
+      "completed": false
+    },
+    {
+      "text": "팀원들과 체크인",
+      "completed": false
+    }
+  ]
+}
