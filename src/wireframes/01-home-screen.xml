@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 홈 화면 - 리마인더 목록 메인 화면 -->
+<screen name="HomeScreen" type="main">
+  <metadata>
+    <title>홈 화면</title>
+    <description>리마인더 목록을 우선순위별로 표시하는 메인 화면</description>
+    <route>/</route>
+  </metadata>
+
+  <!-- 상단 헤더 (sticky) -->
+  <header position="sticky top-0" background="white" border="bottom gray-200">
+    <container padding="px-6 py-5">
+      <row align="between center">
+        <!-- 메뉴 버튼 -->
+        <button variant="ghost" size="icon">
+          <icon name="menu" size="20" />
+        </button>
+
+        <!-- 앱 타이틀 -->
+        <text typography="title">리마인더</text>
+
+        <!-- 위치 버튼 -->
+        <button variant="ghost" size="icon" action="openLocationSettings">
+          <icon name="map-pin" size="20" />
+        </button>
+      </row>
+    </container>
+  </header>
+
+  <!-- 통계 배너 -->
+  <section background="gradient blue-600 to blue-500" padding="px-6 py-6" shadow="md">
+    <container max-width="md" margin="mx-auto">
+      <row align="between center">
+        <!-- 스트릭 -->
+        <column align="start">
+          <row gap="3" align="center">
+            <emoji size="3xl">🔥</emoji>
+            <column>
+              <text size="14px" color="white" weight="medium">연속 완료</text>
+              <text size="22px" color="white" weight="semibold">7일</text>
+            </column>
+          </row>
+        </column>
+
+        <!-- 주간 완료율 -->
+        <column align="end">
+          <text size="14px" color="white" weight="medium">주간 완료율</text>
+          <text size="22px" color="white" weight="semibold">85%</text>
+        </column>
+
+        <!-- 총 완료 -->
+        <column align="end">
+          <text size="14px" color="white" weight="medium">총 완료</text>
+          <text size="22px" color="white" weight="semibold">45</text>
+        </column>
+      </row>
+    </container>
+  </section>
+
+  <!-- 위치 추적 상태 (조건부 표시) -->
+  <section condition="locationTracking.isActive" margin="mx-6 mt-6" padding="p-4" 
+           background="gradient blue-50 to indigo-50" border="blue-200" rounded="xl" shadow="sm">
+    <row gap="3" align="center">
+      <icon name="map-pin" size="20" color="blue-600" animation="pulse" />
+      <column flex="1">
+        <text typography="content" color="gray-900">위치 추적 중</text>
+        <text typography="description" color="gray-700">정확도: ±50m</text>
+      </column>
+      <badge variant="secondary" background="blue-100" color="blue-900">
+        <text typography="description">3개</text>
+      </badge>
+    </row>
+  </section>
+
+  <!-- 메인 콘텐츠 -->
+  <main padding="px-6 py-8" space="y-10" max-width="md" margin="mx-auto">
+    
+    <!-- 긴급 섹션 -->
+    <section condition="urgentReminders.length > 0">
+      <row gap="3" margin="mb-4" align="center">
+        <emoji size="2xl">🔴</emoji>
+        <text typography="title" color="gray-900">긴급 (2)</text>
+      </row>
+      
+      <column space="y-3">
+        <!-- 리마인더 카드 1 -->
+        <card clickable="true" action="openReminderDetail">
+          <container padding="p-4">
+            <row gap="3" align="start">
+              <emoji size="3xl">📸</emoji>
+              <column flex="1">
+                <text typography="content" color="gray-900">자동차 보험 서류 준비</text>
+                <text typography="description" color="gray-600">11월 15일 만기 전 서류 촬영</text>
+                
+                <!-- 트리거 정보 -->
+                <row gap="2" margin="mt-2" align="center">
+                  <icon name="clock" size="14" color="gray-500" />
+                  <text typography="description" color="gray-600">오전 9:00</text>
+                </row>
+
+                <!-- 체크리스트 미리보기 -->
+                <column margin="mt-3" space="y-2">
+                  <row gap="2" align="center">
+                    <checkbox checked="false" />
+                    <text typography="description">계기판 사진 촬영</text>
+                  </row>
+                  <row gap="2" align="center">
+                    <checkbox checked="false" />
+                    <text typography="description">번호판 사진 촬영</text>
+                  </row>
+                  <row gap="2" align="center">
+                    <checkbox checked="false" />
+                    <text typography="description">등록증 사본 준비</text>
+                  </row>
+                </column>
+
+                <!-- 프로그레스 바 -->
+                <row gap="2" margin="mt-3" align="center">
+                  <text typography="description" color="gray-600">0/3</text>
+                  <progressbar value="0" max="100" />
+                </row>
+              </column>
+            </row>
+          </container>
+        </card>
+
+        <!-- 리마인더 카드 2 -->
+        <card clickable="true">
+          <!-- 동일 구조 -->
+        </card>
+      </column>
+    </section>
+
+    <!-- 이번 주 섹션 -->
+    <section condition="weekReminders.length > 0">
+      <row gap="3" margin="mb-4" align="center">
+        <emoji size="2xl">🟡</emoji>
+        <text typography="title" color="gray-900">이번 주 (1)</text>
+      </row>
+      
+      <column space="y-3">
+        <card>
+          <!-- 리마인더 카드 -->
+        </card>
+      </column>
+    </section>
+
+    <!-- 루틴 섹션 -->
+    <section condition="routineReminders.length > 0">
+      <row gap="3" margin="mb-4" align="center">
+        <emoji size="2xl">🟢</emoji>
+        <text typography="title" color="gray-900">루틴 (3)</text>
+      </row>
+      
+      <column space="y-3">
+        <card>
+          <!-- 리마인더 카드 -->
+        </card>
+      </column>
+    </section>
+
+    <!-- 빈 상태 -->
+    <section condition="reminders.length === 0" align="center" padding="py-16">
+      <emoji size="5xl">📝</emoji>
+      <text typography="title" margin="mb-3">리마인더가 없습니다</text>
+      <text typography="description" color="gray-600" margin="mb-8">
+        아래 버튼을 눌러 첫 리마인더를 만들어보세요!
+      </text>
+      <button variant="default" size="lg" action="openAddDialog">
+        <icon name="plus" size="20" />
+        <text>리마인더 만들기</text>
+      </button>
+    </section>
+  </main>
+
+  <!-- 하단 네비게이션 -->
+  <nav position="fixed bottom-0" background="white" border="top gray-200">
+    <container max-width="md" margin="mx-auto">
+      <row align="around" padding="px-4 pb-safe pt-3">
+        <!-- 홈 -->
+        <button variant="ghost" active="true">
+          <column align="center" gap="1.5">
+            <icon name="home" size="20" color="primary" />
+            <text typography="description" color="primary">홈</text>
+          </column>
+        </button>
+
+        <!-- 통계 -->
+        <button variant="ghost">
+          <column align="center" gap="1.5">
+            <icon name="bar-chart-3" size="20" color="gray-400" />
+            <text typography="description" color="gray-400">통계</text>
+          </column>
+        </button>
+
+        <!-- 추가 버튼 (중앙, 큼) -->
+        <button variant="fab" position="-mt-8">
+          <circle background="gradient blue-600 to blue-500" size="64" shadow="lg">
+            <icon name="plus" size="32" color="white" />
+          </circle>
+        </button>
+
+        <!-- 그룹 -->
+        <button variant="ghost">
+          <column align="center" gap="1.5">
+            <icon name="layers" size="20" color="gray-400" />
+            <text typography="description" color="gray-400">그룹</text>
+          </column>
+        </button>
+
+        <!-- 설정 -->
+        <button variant="ghost">
+          <column align="center" gap="1.5">
+            <icon name="settings" size="20" color="gray-400" />
+            <text typography="description" color="gray-400">설정</text>
+          </column>
+        </button>
+      </row>
+    </container>
+  </nav>
+
+  <spacing bottom="96" note="하단 네비게이션 공간 확보" />
+</screen>

@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 리마인더 상세 보기 Sheet -->
+<screen name="ReminderDetailSheet" type="sheet">
+  <metadata>
+    <title>리마인더 상세</title>
+    <description>리마인더의 전체 정보와 체크리스트를 표시하는 Sheet</description>
+    <trigger>리마인더 카드 클릭</trigger>
+    <side>right</side>
+  </metadata>
+
+  <sheet width="full sm:max-w-md" side="right" background="white">
+    <!-- 헤더 -->
+    <header padding="p-6" border="bottom gray-200" background="white" position="sticky top-0">
+      <row align="between center">
+        <button variant="ghost" size="icon" action="goBack">
+          <icon name="arrow-left" size="20" />
+        </button>
+
+        <row gap="2">
+          <button variant="ghost" size="icon" action="edit">
+            <icon name="edit" size="20" />
+          </button>
+          <button variant="ghost" size="icon" action="delete">
+            <icon name="trash-2" size="20" color="red-500" />
+          </button>
+          <button variant="ghost" size="icon" action="share">
+            <icon name="share-2" size="20" />
+          </button>
+        </row>
+      </row>
+    </header>
+
+    <!-- 콘텐츠 -->
+    <content padding="p-6" space="y-6" overflow="scroll">
+      
+      <!-- 리마인더 헤더 -->
+      <section align="center" padding="py-4">
+        <emoji size="5xl" margin="mb-4">📸</emoji>
+        <text typography="title" align="center" margin="mb-2">
+          자동차 보험 서류 준비
+        </text>
+        <text typography="description" color="gray-600" align="center">
+          11월 15일 만기 전 서류 촬영
+        </text>
+      </section>
+
+      <!-- 메타 정보 -->
+      <section background="gray-50" rounded="xl" padding="p-4" space="y-3">
+        <!-- 우선순위 -->
+        <row gap="2" align="center">
+          <text typography="content" color="gray-600" width="w-24">우선순위</text>
+          <row gap="2" align="center">
+            <emoji>🔴</emoji>
+            <text typography="content" color="gray-900">긴급</text>
+          </row>
+        </row>
+
+        <!-- 그룹 -->
+        <row gap="2" align="center" condition="hasGroup">
+          <text typography="content" color="gray-600" width="w-24">그룹</text>
+          <badge background="gray-200">
+            <text typography="description">🚪 외출 전</text>
+          </badge>
+        </row>
+
+        <!-- 트리거 -->
+        <row gap="2" align="center">
+          <text typography="content" color="gray-600" width="w-24">트리거</text>
+          <row gap="2" align="center">
+            <icon name="clock" size="16" color="gray-500" />
+            <text typography="content" color="gray-900">시간 기반</text>
+          </row>
+        </row>
+
+        <!-- 시간 -->
+        <row gap="2" align="center">
+          <text typography="content" color="gray-600" width="w-24">시간</text>
+          <text typography="content" color="gray-900">오전 9:00</text>
+        </row>
+
+        <!-- 요일 -->
+        <row gap="2" align="start" condition="hasDays">
+          <text typography="content" color="gray-600" width="w-24">요일</text>
+          <text typography="content" color="gray-900">월, 수, 금</text>
+        </row>
+
+        <!-- 위치 (조건부) -->
+        <section condition="hasLocation">
+          <row gap="2" align="center">
+            <text typography="content" color="gray-600" width="w-24">위치</text>
+            <row gap="2" align="center">
+              <icon name="map-pin" size="16" color="gray-500" />
+              <text typography="content" color="gray-900">우리 집</text>
+            </row>
+          </row>
+          
+          <row gap="2" align="center">
+            <text typography="content" color="gray-600" width="w-24">트리거</text>
+            <text typography="content" color="gray-900">떠날 때</text>
+          </row>
+
+          <row gap="2" align="center">
+            <text typography="content" color="gray-600" width="w-24">반경</text>
+            <text typography="content" color="gray-900">100m</text>
+          </row>
+        </section>
+      </section>
+
+      <!-- 체크리스트 -->
+      <section>
+        <row align="between center" margin="mb-4">
+          <text typography="content" color="gray-900">체크리스트</text>
+          <row gap="2" align="center">
+            <text typography="description" color="gray-600">0/3</text>
+            <progressbar value="0" max="100" width="w-20" />
+          </row>
+        </row>
+
+        <column space="y-3">
+          <!-- 체크리스트 항목 1 -->
+          <row gap="3" align="start" padding="p-3" rounded="lg" 
+               background="white" border="gray-200" hover="gray-50" 
+               clickable="true" action="toggleChecklistItem">
+            <checkbox checked="false" size="20" />
+            <text flex="1" typography="content" color="gray-900">
+              계기판 사진 촬영
+            </text>
+          </row>
+
+          <!-- 체크리스트 항목 2 -->
+          <row gap="3" align="start" padding="p-3" rounded="lg" 
+               background="white" border="gray-200">
+            <checkbox checked="false" size="20" />
+            <text flex="1" typography="content" color="gray-900">
+              번호판 사진 촬영
+            </text>
+          </row>
+
+          <!-- 체크리스트 항목 3 -->
+          <row gap="3" align="start" padding="p-3" rounded="lg" 
+               background="white" border="gray-200">
+            <checkbox checked="false" size="20" />
+            <text flex="1" typography="content" color="gray-900">
+              등록증 사본 준비
+            </text>
+          </row>
+
+          <!-- 완료된 항목 (예시) -->
+          <row gap="3" align="start" padding="p-3" rounded="lg" 
+               background="gray-50" border="gray-200" opacity="70">
+            <checkbox checked="true" size="20" />
+            <text flex="1" typography="content" color="gray-600" decoration="line-through">
+              이미 완료된 항목
+            </text>
+          </row>
+        </column>
+      </section>
+
+      <!-- 통계 정보 -->
+      <section background="gray-50" rounded="xl" padding="p-4" space="y-3">
+        <text typography="content" color="gray-900" margin="mb-2">통계</text>
+        
+        <row gap="2" align="center">
+          <text typography="description" color="gray-600" width="w-32">완료 횟수</text>
+          <text typography="content" color="gray-900">0회</text>
+        </row>
+
+        <row gap="2" align="center">
+          <text typography="description" color="gray-600" width="w-32">표시된 횟수</text>
+          <text typography="content" color="gray-900">3회</text>
+        </row>
+
+        <row gap="2" align="center">
+          <text typography="description" color="gray-600" width="w-32">마지막 완료</text>
+          <text typography="content" color="gray-900">-</text>
+        </row>
+
+        <row gap="2" align="center">
+          <text typography="description" color="gray-600" width="w-32">생성일</text>
+          <text typography="content" color="gray-900">2025.10.20</text>
+        </row>
+      </section>
+    </content>
+
+    <!-- 완료 버튼 (선택사항, 향후 구현) -->
+    <footer padding="p-6" border="top gray-200" background="white" 
+            position="sticky bottom-0" condition="allCompleted === false">
+      <button variant="default" width="w-full" height="h-14" action="markAsComplete">
+        <icon name="check" size="20" />
+        <text>모두 완료 처리</text>
+      </button>
+    </footer>
+  </sheet>
+
+  <!-- 오버레이 -->
+  <overlay background="black" opacity="30" action="closeSheet" />
+</screen>

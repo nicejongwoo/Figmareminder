@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 통계 화면 -->
+<screen name="StatsView" type="tab">
+  <metadata>
+    <title>통계</title>
+    <description>사용자의 완료 통계와 배지를 표시하는 화면</description>
+    <tab>stats</tab>
+  </metadata>
+
+  <content padding="px-6 py-8" max-width="md" margin="mx-auto" space="y-8">
+    
+    <!-- 스트릭 섹션 -->
+    <section>
+      <text typography="title" color="gray-900" margin="mb-4">연속 완료</text>
+      
+      <row gap="4">
+        <!-- 현재 스트릭 -->
+        <card flex="1" padding="p-6" align="center">
+          <emoji size="5xl" margin="mb-3">🔥</emoji>
+          <text typography="description" color="gray-600" margin="mb-1">현재 스트릭</text>
+          <text size="32px" weight="bold" color="primary">7일</text>
+        </card>
+
+        <!-- 최장 스트릭 -->
+        <card flex="1" padding="p-6" align="center">
+          <emoji size="5xl" margin="mb-3">🏆</emoji>
+          <text typography="description" color="gray-600" margin="mb-1">최장 스트릭</text>
+          <text size="32px" weight="bold" color="gray-900">12일</text>
+        </card>
+      </row>
+    </section>
+
+    <!-- 완료 통계 섹션 -->
+    <section>
+      <text typography="title" color="gray-900" margin="mb-4">완료 통계</text>
+      
+      <card padding="p-6" space="y-4">
+        <!-- 총 완료 횟수 -->
+        <row align="between center">
+          <row gap="3" align="center">
+            <circle background="blue-100" size="48" align="center">
+              <icon name="check" size="24" color="primary" />
+            </circle>
+            <column>
+              <text typography="description" color="gray-600">총 완료 횟수</text>
+              <text size="24px" weight="semibold" color="gray-900">45회</text>
+            </column>
+          </row>
+        </row>
+
+        <separator />
+
+        <!-- 주간 완료율 -->
+        <row align="between center">
+          <row gap="3" align="center">
+            <circle background="green-100" size="48" align="center">
+              <icon name="trending-up" size="24" color="green-600" />
+            </circle>
+            <column>
+              <text typography="description" color="gray-600">주간 완료율</text>
+              <text size="24px" weight="semibold" color="gray-900">85%</text>
+            </column>
+          </row>
+        </row>
+
+        <separator />
+
+        <!-- 이번 주 완료 -->
+        <row align="between center">
+          <row gap="3" align="center">
+            <circle background="purple-100" size="48" align="center">
+              <icon name="calendar" size="24" color="purple-600" />
+            </circle>
+            <column>
+              <text typography="description" color="gray-600">이번 주 완료</text>
+              <text size="24px" weight="semibold" color="gray-900">12회</text>
+            </column>
+          </row>
+        </row>
+      </card>
+    </section>
+
+    <!-- 주간 완료 차트 (향후 구현) -->
+    <section>
+      <text typography="title" color="gray-900" margin="mb-4">주간 활동</text>
+      
+      <card padding="p-6">
+        <row gap="2" align="end" height="h-40" justify="between">
+          <!-- 막대 그래프 (예시) -->
+          <column flex="1" align="center" gap="2">
+            <bar background="blue-600" height="h-20" width="w-full" rounded="top" />
+            <text typography="description" color="gray-600">월</text>
+          </column>
+          <column flex="1" align="center" gap="2">
+            <bar background="blue-600" height="h-24" width="w-full" rounded="top" />
+            <text typography="description" color="gray-600">화</text>
+          </column>
+          <column flex="1" align="center" gap="2">
+            <bar background="blue-600" height="h-16" width="w-full" rounded="top" />
+            <text typography="description" color="gray-600">수</text>
+          </column>
+          <column flex="1" align="center" gap="2">
+            <bar background="blue-600" height="h-28" width="w-full" rounded="top" />
+            <text typography="description" color="gray-600">목</text>
+          </column>
+          <column flex="1" align="center" gap="2">
+            <bar background="blue-600" height="h-32" width="w-full" rounded="top" />
+            <text typography="description" color="gray-600">금</text>
+          </column>
+          <column flex="1" align="center" gap="2">
+            <bar background="gray-200" height="h-12" width="w-full" rounded="top" />
+            <text typography="description" color="gray-600">토</text>
+          </column>
+          <column flex="1" align="center" gap="2">
+            <bar background="gray-200" height="h-8" width="w-full" rounded="top" />
+            <text typography="description" color="gray-600">일</text>
+          </column>
+        </row>
+      </card>
+    </section>
+
+    <!-- 배지 섹션 -->
+    <section>
+      <text typography="title" color="gray-900" margin="mb-4">배지</text>
+      
+      <!-- 획득한 배지 -->
+      <section margin="mb-6">
+        <text typography="content" color="gray-700" margin="mb-3">획득한 배지 (2)</text>
+        
+        <grid columns="2" gap="4">
+          <!-- 배지 카드 1 -->
+          <card padding="p-4" align="center" background="gradient from-yellow-50 to-orange-50" 
+                border="yellow-200">
+            <emoji size="4xl" margin="mb-2">🎯</emoji>
+            <text typography="content" color="gray-900" margin="mb-1" weight="semibold">
+              첫 완료
+            </text>
+            <text typography="description" color="gray-600" align="center" margin="mb-2">
+              첫 리마인더 완료
+            </text>
+            <text typography="description" color="gray-500" size="12px">
+              2025.10.28
+            </text>
+          </card>
+
+          <!-- 배지 카드 2 -->
+          <card padding="p-4" align="center" background="gradient from-red-50 to-orange-50" 
+                border="red-200">
+            <emoji size="4xl" margin="mb-2">🔥</emoji>
+            <text typography="content" color="gray-900" margin="mb-1" weight="semibold">
+              7일 연속
+            </text>
+            <text typography="description" color="gray-600" align="center" margin="mb-2">
+              7일 연속 완료
+            </text>
+            <text typography="description" color="gray-500" size="12px">
+              2025.11.01
+            </text>
+          </card>
+        </grid>
+      </section>
+
+      <!-- 미획득 배지 -->
+      <section>
+        <text typography="content" color="gray-700" margin="mb-3">미획득 배지 (2)</text>
+        
+        <grid columns="2" gap="4">
+          <!-- 잠긴 배지 1 -->
+          <card padding="p-4" align="center" background="gray-50" border="gray-200" 
+                opacity="60">
+            <emoji size="4xl" margin="mb-2" filter="grayscale">⭐</emoji>
+            <text typography="content" color="gray-600" margin="mb-1" weight="semibold">
+              완벽주의자
+            </text>
+            <text typography="description" color="gray-500" align="center">
+              주간 완료율 100%
+            </text>
+          </card>
+
+          <!-- 잠긴 배지 2 -->
+          <card padding="p-4" align="center" background="gray-50" border="gray-200" 
+                opacity="60">
+            <emoji size="4xl" margin="mb-2" filter="grayscale">📍</emoji>
+            <text typography="content" color="gray-600" margin="mb-1" weight="semibold">
+              장소의 달인
+            </text>
+            <text typography="description" color="gray-500" align="center">
+              위치 기반 알림 10회 완료
+            </text>
+          </card>
+        </grid>
+      </section>
+    </section>
+
+    <!-- 격려 메시지 -->
+    <section padding="p-6" background="gradient from-blue-50 to-indigo-50" 
+             rounded="xl" border="blue-200" align="center">
+      <emoji size="3xl" margin="mb-2">🎉</emoji>
+      <text typography="content" color="gray-900" margin="mb-1" weight="semibold">
+        잘하고 있어요!
+      </text>
+      <text typography="description" color="gray-600" align="center">
+        이번 주 완료율이 85%입니다. 조금만 더 힘내세요!
+      </text>
+    </section>
+  </content>
+
+  <spacing bottom="96" note="하단 네비게이션 공간" />
+</screen>

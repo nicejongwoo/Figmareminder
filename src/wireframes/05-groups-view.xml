@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 그룹 목록 화면 -->
+<screen name="GroupsView" type="tab">
+  <metadata>
+    <title>그룹</title>
+    <description>리마인더 그룹 목록을 표시하는 화면</description>
+    <tab>groups</tab>
+  </metadata>
+
+  <content padding="px-6 py-8" max-width="md" margin="mx-auto" space="y-6">
+    
+    <!-- 프리셋 그룹 섹션 -->
+    <section>
+      <text typography="title" color="gray-900" margin="mb-4">프리셋 그룹</text>
+      
+      <column space="y-3">
+        <!-- 그룹 카드 1 -->
+        <card clickable="true" action="openGroupDetail" 
+              hover="shadow-md" transition="shadow">
+          <container padding="p-4">
+            <row align="between center">
+              <row gap="4" align="center">
+                <circle background="blue-100" size="48" align="center">
+                  <emoji size="2xl">🚪</emoji>
+                </circle>
+                <column>
+                  <text typography="content" color="gray-900" weight="semibold">
+                    외출 전
+                  </text>
+                  <text typography="description" color="gray-600">
+                    1개 리마인더
+                  </text>
+                </column>
+              </row>
+              <icon name="chevron-right" size="20" color="gray-400" />
+            </row>
+          </container>
+        </card>
+
+        <!-- 그룹 카드 2 -->
+        <card clickable="true" hover="shadow-md" transition="shadow">
+          <container padding="p-4">
+            <row align="between center">
+              <row gap="4" align="center">
+                <circle background="purple-100" size="48" align="center">
+                  <emoji size="2xl">🎮</emoji>
+                </circle>
+                <column>
+                  <text typography="content" color="gray-900" weight="semibold">
+                    PC방 방문
+                  </text>
+                  <text typography="description" color="gray-600">
+                    1개 리마인더
+                  </text>
+                </column>
+              </row>
+              <icon name="chevron-right" size="20" color="gray-400" />
+            </row>
+          </container>
+        </card>
+
+        <!-- 그룹 카드 3 -->
+        <card clickable="true" hover="shadow-md" transition="shadow">
+          <container padding="p-4">
+            <row align="between center">
+              <row gap="4" align="center">
+                <circle background="green-100" size="48" align="center">
+                  <emoji size="2xl">💼</emoji>
+                </circle>
+                <column>
+                  <text typography="content" color="gray-900" weight="semibold">
+                    업무 시작
+                  </text>
+                  <text typography="description" color="gray-600">
+                    1개 리마인더
+                  </text>
+                </column>
+              </row>
+              <icon name="chevron-right" size="20" color="gray-400" />
+            </row>
+          </container>
+        </card>
+
+        <!-- 그룹 카드 4 -->
+        <card clickable="true" hover="shadow-md" transition="shadow">
+          <container padding="p-4">
+            <row align="between center">
+              <row gap="4" align="center">
+                <circle background="orange-100" size="48" align="center">
+                  <emoji size="2xl">✈️</emoji>
+                </circle>
+                <column>
+                  <text typography="content" color="gray-900" weight="semibold">
+                    여행 준비
+                  </text>
+                  <text typography="description" color="gray-600">
+                    0개 리마인더
+                  </text>
+                </column>
+              </row>
+              <icon name="chevron-right" size="20" color="gray-400" />
+            </row>
+          </container>
+        </card>
+      </column>
+    </section>
+
+    <!-- 커스텀 그룹 섹션 (향후 구현) -->
+    <section condition="customGroups.length > 0">
+      <row align="between center" margin="mb-4">
+        <text typography="title" color="gray-900">커스텀 그룹</text>
+        <button variant="ghost" size="sm" action="addCustomGroup">
+          <icon name="plus" size="16" />
+          <text typography="description">새 그룹</text>
+        </button>
+      </row>
+      
+      <column space="y-3">
+        <card>
+          <!-- 커스텀 그룹 카드 -->
+        </card>
+      </column>
+    </section>
+
+    <!-- 빈 상태 (커스텀 그룹 없을 때) -->
+    <section condition="customGroups.length === 0" 
+             padding="p-8" align="center" background="gray-50" rounded="xl">
+      <emoji size="4xl" margin="mb-3">📦</emoji>
+      <text typography="content" color="gray-700" margin="mb-2">
+        커스텀 그룹이 없습니다
+      </text>
+      <text typography="description" color="gray-600" align="center" margin="mb-4">
+        나만의 그룹을 만들어 리마인더를 관리하세요
+      </text>
+      <button variant="outline" size="sm" action="addCustomGroup" disabled="true">
+        <icon name="plus" size="16" />
+        <text>새 그룹 만들기</text>
+      </button>
+      <text typography="description" color="gray-500" margin="mt-2" size="12px">
+        (향후 업데이트 예정)
+      </text>
+    </section>
+
+    <!-- 그룹 설명 -->
+    <section padding="p-4" background="blue-50" rounded="lg" border="blue-200">
+      <row gap="2" align="start">
+        <icon name="info" size="20" color="blue-600" />
+        <column flex="1">
+          <text typography="description" color="blue-900">
+            그룹을 사용하면 관련된 리마인더를 함께 관리할 수 있습니다.
+          </text>
+        </column>
+      </row>
+    </section>
+  </content>
+
+  <spacing bottom="96" note="하단 네비게이션 공간" />
+</screen>

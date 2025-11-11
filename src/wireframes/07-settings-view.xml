@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 설정 화면 -->
+<screen name="SettingsView" type="sheet">
+  <metadata>
+    <title>설정</title>
+    <description>앱 설정 및 데이터 관리 화면</description>
+    <trigger>하단 네비게이션 설정 버튼, 메뉴 > 설정</trigger>
+  </metadata>
+
+  <sheet width="full sm:max-w-md" side="right" background="white">
+    <!-- 헤더 -->
+    <header padding="p-6" border="bottom gray-200" background="white" position="sticky top-0">
+      <row align="between center">
+        <text typography="title">설정</text>
+        <button variant="ghost" size="icon" action="close">
+          <icon name="x" size="20" />
+        </button>
+      </row>
+    </header>
+
+    <!-- 콘텐츠 -->
+    <content padding="p-6" space="y-8" overflow="scroll">
+      
+      <!-- 알림 설정 -->
+      <section>
+        <text typography="content" color="gray-900" margin="mb-4">알림 설정</text>
+        
+        <card padding="p-4" space="y-4" border="gray-200">
+          <!-- 알림 활성화 -->
+          <row align="between center">
+            <column flex="1">
+              <text typography="content" color="gray-900">알림 활성화</text>
+              <text typography="description" color="gray-600">
+                리마인더 알림을 받습니다
+              </text>
+            </column>
+            <switch checked="true" />
+          </row>
+
+          <separator />
+
+          <!-- 위치 기반 알림 -->
+          <row align="between center">
+            <column flex="1">
+              <text typography="content" color="gray-900">위치 기반 알림</text>
+              <text typography="description" color="gray-600">
+                장소 도착/떠남 시 알림을 받습니다
+              </text>
+            </column>
+            <switch checked="true" />
+          </row>
+
+          <separator />
+
+          <!-- 시간 기반 알림 -->
+          <row align="between center">
+            <column flex="1">
+              <text typography="content" color="gray-900">시간 기반 알림</text>
+              <text typography="description" color="gray-600">
+                설정한 시간에 알림을 받습니다
+              </text>
+            </column>
+            <switch checked="true" />
+          </row>
+
+          <separator />
+
+          <!-- 사운드 -->
+          <row align="between center">
+            <column flex="1">
+              <text typography="content" color="gray-900">알림 사운드</text>
+              <text typography="description" color="gray-600">
+                알림 시 소리를 재생합니다
+              </text>
+            </column>
+            <switch checked="false" disabled="true" />
+          </row>
+          <text typography="description" color="gray-500" size="12px">
+            (향후 업데이트 예정)
+          </text>
+        </card>
+      </section>
+
+      <!-- 데이터 관리 -->
+      <section>
+        <text typography="content" color="gray-900" margin="mb-4">데이터 관리</text>
+        
+        <column space="y-3">
+          <!-- 데이터 내보내기 -->
+          <card clickable="true" action="exportAllData" hover="shadow-md">
+            <container padding="p-4">
+              <row gap="3" align="center">
+                <circle background="blue-100" size="48" align="center">
+                  <icon name="download" size="24" color="primary" />
+                </circle>
+                <column flex="1">
+                  <text typography="content" color="gray-900">데이터 내보내기</text>
+                  <text typography="description" color="gray-600">
+                    모든 데이터를 JSON 파일로 저장
+                  </text>
+                </column>
+                <icon name="chevron-right" size="20" color="gray-400" />
+              </row>
+            </container>
+          </card>
+
+          <!-- 데이터 가져오기 -->
+          <card clickable="true" action="importData" hover="shadow-md" 
+                disabled="true" opacity="50">
+            <container padding="p-4">
+              <row gap="3" align="center">
+                <circle background="green-100" size="48" align="center">
+                  <icon name="upload" size="24" color="green-600" />
+                </circle>
+                <column flex="1">
+                  <text typography="content" color="gray-900">데이터 가져오기</text>
+                  <text typography="description" color="gray-600">
+                    백업 파일에서 복원
+                  </text>
+                </column>
+                <icon name="chevron-right" size="20" color="gray-400" />
+              </row>
+            </container>
+          </card>
+
+          <!-- 모든 데이터 삭제 -->
+          <card clickable="true" action="clearAllData" hover="shadow-md">
+            <container padding="p-4">
+              <row gap="3" align="center">
+                <circle background="red-100" size="48" align="center">
+                  <icon name="trash-2" size="24" color="red-600" />
+                </circle>
+                <column flex="1">
+                  <text typography="content" color="red-600">모든 데이터 삭제</text>
+                  <text typography="description" color="red-500">
+                    리마인더, 그룹, 통계를 모두 삭제
+                  </text>
+                </column>
+                <icon name="chevron-right" size="20" color="gray-400" />
+              </row>
+            </container>
+          </card>
+        </column>
+      </section>
+
+      <!-- 표시 설정 -->
+      <section>
+        <text typography="content" color="gray-900" margin="mb-4">표시 설정</text>
+        
+        <card padding="p-4" space="y-4" border="gray-200">
+          <!-- 다크 모드 -->
+          <row align="between center">
+            <column flex="1">
+              <text typography="content" color="gray-900">다크 모드</text>
+              <text typography="description" color="gray-600">
+                어두운 테마를 사용합니다
+              </text>
+            </column>
+            <switch checked="false" disabled="true" />
+          </row>
+          <text typography="description" color="gray-500" size="12px">
+            (향후 업데이트 예정)
+          </text>
+
+          <separator />
+
+          <!-- 애니메이션 -->
+          <row align="between center">
+            <column flex="1">
+              <text typography="content" color="gray-900">애니메이션</text>
+              <text typography="description" color="gray-600">
+                화면 전환 효과를 사용합니다
+              </text>
+            </column>
+            <switch checked="true" disabled="true" />
+          </row>
+        </card>
+      </section>
+
+      <!-- 정보 -->
+      <section>
+        <text typography="content" color="gray-900" margin="mb-4">정보</text>
+        
+        <card padding="p-4" space="y-3" border="gray-200">
+          <!-- 앱 버전 -->
+          <row align="between center">
+            <text typography="content" color="gray-600">버전</text>
+            <text typography="content" color="gray-900">1.0.0</text>
+          </row>
+
+          <separator />
+
+          <!-- 라이선스 -->
+          <row align="between center">
+            <text typography="content" color="gray-600">라이선스</text>
+            <text typography="content" color="gray-900">MIT</text>
+          </row>
+
+          <separator />
+
+          <!-- 만든 사람 -->
+          <row align="between center">
+            <text typography="content" color="gray-600">개발</text>
+            <text typography="content" color="gray-900">Figma Make</text>
+          </row>
+        </card>
+      </section>
+
+      <!-- 링크 -->
+      <section>
+        <column space="y-2">
+          <button variant="ghost" justify="start" height="h-12" 
+                  action="openHelp" disabled="true">
+            <icon name="help-circle" size="20" />
+            <text>도움말</text>
+          </button>
+          
+          <button variant="ghost" justify="start" height="h-12" 
+                  action="openPrivacy" disabled="true">
+            <icon name="shield" size="20" />
+            <text>개인정보 처리방침</text>
+          </button>
+          
+          <button variant="ghost" justify="start" height="h-12" 
+                  action="openTerms" disabled="true">
+            <icon name="file-text" size="20" />
+            <text>이용 약관</text>
+          </button>
+        </column>
+      </section>
+
+      <!-- 경고 메시지 -->
+      <section padding="p-4" background="yellow-50" rounded="lg" border="yellow-200">
+        <row gap="2" align="start">
+          <icon name="alert-triangle" size="20" color="yellow-600" />
+          <column flex="1">
+            <text typography="description" color="yellow-900">
+              <strong>주의:</strong> 이 앱은 개인 정보 수집(PII)이나 민감한 데이터 보안을 위한 용도가 아닙니다.
+            </text>
+          </column>
+        </row>
+      </section>
+    </content>
+  </sheet>
+
+  <!-- 오버레이 -->
+  <overlay background="black" opacity="30" action="closeSheet" />
+</screen>

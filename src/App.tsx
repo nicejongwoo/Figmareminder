@@ -37,6 +37,7 @@ import { EditGroupView } from "./components/EditGroupView";
 import { ShareDialog } from "./components/ShareDialog";
 import { ImportDialog } from "./components/ImportDialog";
 import { LocationSettingsView } from "./components/LocationSettingsView";
+import { SettingsView } from "./components/SettingsView";
 import {
   mockReminders,
   mockGroups,
@@ -71,6 +72,7 @@ export default function App() {
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [locationSettingsOpen, setLocationSettingsOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   // Location tracking
   const handleLocationTrigger = useCallback((reminder: Reminder) => {
@@ -346,7 +348,41 @@ export default function App() {
     });
 
     setGroupDetailSheetOpen(false);
-    setSelectedGroupId(null);
+  };
+
+  const handleClearAllData = () => {
+    setReminders([]);
+    setGroups(mockGroups); // Reset to default groups
+    setSavedLocations([]);
+    setStats({
+      totalCompletions: 0,
+      currentStreak: 0,
+      longestStreak: 0,
+      weeklyCompletionRate: 0,
+    });
+  };
+
+  const handleExportAllData = () => {
+    const data = {
+      reminders,
+      groups,
+      savedLocations,
+      stats,
+      exportDate: new Date().toISOString(),
+      version: '1.0.0',
+    };
+
+    const dataStr = JSON.stringify(data, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `smart-reminder-backup-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   const handleAddLocation = (
@@ -392,6 +428,9 @@ export default function App() {
           <SheetContent side="left" className="w-80">
             <SheetHeader className="mb-8">
               <SheetTitle className="text-title text-left">메뉴</SheetTitle>
+              <SheetDescription className="text-left">
+                앱 기능 및 설정 메뉴
+              </SheetDescription>
             </SheetHeader>
             <div className="space-y-2">
               <Button
@@ -413,6 +452,7 @@ export default function App() {
               <Button
                 variant="ghost"
                 className="w-full justify-start gap-3 h-14 text-content px-4 active:scale-98 transition-transform"
+                onClick={() => setSettingsOpen(true)}
               >
                 <Settings className="h-5 w-5" />
                 설정
@@ -432,14 +472,7 @@ export default function App() {
           >
             <MapPin className="h-5 w-5" />
           </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-11 w-11 active:scale-95 transition-transform"
-            onClick={() => setShareDialogOpen(true)}
-          >
-            <Share2 className="h-5 w-5" />
-          </Button>
+
         </div>
       </header>
 
@@ -719,11 +752,7 @@ export default function App() {
 
             {/* Settings */}
             <button
-              onClick={() =>
-                toast.info("⚙️ 설정", {
-                  description: "설정 화면 (구현 예정)",
-                })
-              }
+              onClick={() => setSettingsOpen(true)}
               className="flex flex-col items-center gap-1.5 py-2 px-4 min-w-[70px] active:scale-95 transition-transform"
             >
               <Settings className="h-5 w-5 text-gray-400" />
@@ -845,7 +874,7 @@ export default function App() {
           <SheetHeader className="sr-only">
             <SheetTitle>그룹 편집</SheetTitle>
             <SheetDescription>
-              그룹 정보 수정 및 리마인더 관리
+              그��� 정보 수정 및 리마인더 관리
             </SheetDescription>
           </SheetHeader>
           {editingGroup && (
@@ -894,6 +923,29 @@ export default function App() {
             onUpdateLocation={handleUpdateLocation}
             onDeleteLocation={handleDeleteLocation}
             onBack={() => setLocationSettingsOpen(false)}
+          />
+        </SheetContent>
+      </Sheet>
+
+      {/* Settings Sheet */}
+      <Sheet
+        open={settingsOpen}
+        onOpenChange={setSettingsOpen}
+      >
+        <SheetContent
+          side="right"
+          className="w-full sm:max-w-md p-0"
+        >
+          <SheetHeader className="sr-only">
+            <SheetTitle>설정</SheetTitle>
+            <SheetDescription>
+              앱 설정 및 환경 설정
+            </SheetDescription>
+          </SheetHeader>
+          <SettingsView
+            onBack={() => setSettingsOpen(false)}
+            onClearAllData={handleClearAllData}
+            onExportData={handleExportAllData}
           />
         </SheetContent>
       </Sheet>

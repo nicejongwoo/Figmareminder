@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 리마인더 추가/수정 다이얼로그 -->
+<screen name="AddReminderDialog" type="dialog">
+  <metadata>
+    <title>리마인더 추가/수정</title>
+    <description>새 리마인더를 생성하거나 기존 리마인더를 수정하는 다이얼로그</description>
+    <trigger>Plus 버튼, 편집 버튼</trigger>
+  </metadata>
+
+  <dialog max-width="md" rounded="2xl" shadow="xl">
+    <!-- 헤더 -->
+    <header padding="p-6" border="bottom gray-200">
+      <text typography="title">
+        <condition if="isEditing">리마인더 수정</condition>
+        <condition if="!isEditing">새 리마인더</condition>
+      </text>
+    </header>
+
+    <!-- 콘텐츠 -->
+    <content padding="p-6" space="y-6" overflow="scroll" max-height="80vh">
+      
+      <!-- 기본 정보 섹션 -->
+      <section>
+        <text typography="content" color="gray-900" margin="mb-4">기본 정보</text>
+        
+        <!-- 제목 -->
+        <form-group margin="mb-4">
+          <label required="true">제목</label>
+          <input type="text" placeholder="리마인더 제목을 입력하세요" 
+                 height="h-12" typography="content" />
+        </form-group>
+
+        <!-- 설명 (선택사항) -->
+        <form-group margin="mb-4">
+          <label>설명</label>
+          <textarea placeholder="상세 설명 (선택사항)" 
+                    rows="3" typography="content" />
+        </form-group>
+
+        <!-- 아이콘 선택 -->
+        <form-group margin="mb-4">
+          <label>아이콘</label>
+          <grid columns="8" gap="2">
+            <button variant="ghost" size="icon" selected="false">
+              <emoji>📝</emoji>
+            </button>
+            <button variant="ghost" size="icon" selected="true" 
+                    border="2 primary" background="blue-50">
+              <emoji>📸</emoji>
+            </button>
+            <button variant="ghost" size="icon">
+              <emoji>💼</emoji>
+            </button>
+            <button variant="ghost" size="icon">
+              <emoji>🏠</emoji>
+            </button>
+            <button variant="ghost" size="icon">
+              <emoji>💊</emoji>
+            </button>
+            <button variant="ghost" size="icon">
+              <emoji>🏃</emoji>
+            </button>
+            <button variant="ghost" size="icon">
+              <emoji>📚</emoji>
+            </button>
+            <button variant="ghost" size="icon">
+              <emoji>🎮</emoji>
+            </button>
+          </grid>
+        </form-group>
+
+        <!-- 우선순위 -->
+        <form-group margin="mb-4">
+          <label>우선순위</label>
+          <row gap="2">
+            <button variant="outline" selected="false">
+              <emoji>🔴</emoji>
+              <text>긴급</text>
+            </button>
+            <button variant="outline" selected="false">
+              <emoji>🟡</emoji>
+              <text>이번 주</text>
+            </button>
+            <button variant="outline" selected="true" 
+                    border="2 primary" background="blue-50">
+              <emoji>🟢</emoji>
+              <text>루틴</text>
+            </button>
+          </row>
+        </form-group>
+
+        <!-- 그룹 선택 -->
+        <form-group>
+          <label>그룹</label>
+          <select height="h-12" typography="content">
+            <option value="">그룹 선택 (선택사항)</option>
+            <option value="g1">🚪 외출 전</option>
+            <option value="g2">🎮 PC방 방문</option>
+            <option value="g3">💼 업무 시작</option>
+            <option value="g4">✈️ 여행 준비</option>
+          </select>
+        </form-group>
+      </section>
+
+      <!-- 트리거 설정 섹션 -->
+      <section>
+        <text typography="content" color="gray-900" margin="mb-4">알림 트리거</text>
+        
+        <!-- 트리거 타입 선택 -->
+        <form-group margin="mb-4">
+          <label>트리거 타입</label>
+          <column space="y-2">
+            <radio-button value="time" selected="false">
+              <row gap="2" align="center">
+                <icon name="clock" size="20" />
+                <text>시간 기반</text>
+              </row>
+            </radio-button>
+            <radio-button value="location" selected="false">
+              <row gap="2" align="center">
+                <icon name="map-pin" size="20" />
+                <text>위치 기반</text>
+              </row>
+            </radio-button>
+            <radio-button value="both" selected="true">
+              <row gap="2" align="center">
+                <icon name="clock" size="20" />
+                <icon name="map-pin" size="20" />
+                <text>시간과 위치 모두</text>
+              </row>
+            </radio-button>
+          </column>
+        </form-group>
+
+        <!-- 시간 설정 (조건부) -->
+        <section condition="trigger === 'time' || trigger === 'both'">
+          <form-group margin="mb-4">
+            <label>시간</label>
+            <input type="time" height="h-12" typography="content" />
+          </form-group>
+
+          <form-group>
+            <label>반복 요일</label>
+            <row gap="2">
+              <button variant="outline" size="icon" selected="false">일</button>
+              <button variant="outline" size="icon" selected="true" 
+                      border="2 primary" background="blue-50">월</button>
+              <button variant="outline" size="icon" selected="false">화</button>
+              <button variant="outline" size="icon" selected="true" 
+                      border="2 primary" background="blue-50">수</button>
+              <button variant="outline" size="icon" selected="false">목</button>
+              <button variant="outline" size="icon" selected="true" 
+                      border="2 primary" background="blue-50">금</button>
+              <button variant="outline" size="icon" selected="false">토</button>
+            </row>
+            <text typography="description" color="gray-600" margin="mt-2">
+              선택하지 않으면 매일 반복됩니다
+            </text>
+          </form-group>
+        </section>
+
+        <!-- 위치 설정 (조건부) -->
+        <section condition="trigger === 'location' || trigger === 'both'" margin="mt-4">
+          <form-group margin="mb-4">
+            <label>위치</label>
+            <select height="h-12" typography="content">
+              <option value="">저장된 위치 선택</option>
+              <option value="loc-1" selected="true">🏠 우리 집</option>
+              <option value="loc-2">💼 회사</option>
+              <option value="loc-3">🎮 단골 PC방</option>
+            </select>
+            <button variant="ghost" margin="mt-2" action="openLocationPicker">
+              <icon name="map-pin" size="16" />
+              <text typography="description">새 위치 추가</text>
+            </button>
+          </form-group>
+
+          <form-group>
+            <label>트리거 시점</label>
+            <row gap="2">
+              <button variant="outline" selected="true" 
+                      border="2 primary" background="blue-50">
+                <text>도착할 때</text>
+              </button>
+              <button variant="outline" selected="false">
+                <text>떠날 때</text>
+              </button>
+            </row>
+          </form-group>
+        </section>
+      </section>
+
+      <!-- 체크리스트 섹션 -->
+      <section>
+        <row align="between center" margin="mb-4">
+          <text typography="content" color="gray-900">체크리스트</text>
+          <text typography="description" color="gray-600">3개</text>
+        </row>
+
+        <!-- 체크리스트 항목들 -->
+        <column space="y-2" margin="mb-4">
+          <row gap="2" align="center" padding="p-2" rounded="md" 
+               background="gray-50" hover="gray-100">
+            <icon name="grip-vertical" size="16" color="gray-400" note="드래그 핸들" />
+            <text flex="1" typography="content">계기판 사진 촬영</text>
+            <button variant="ghost" size="icon-sm">
+              <icon name="x" size="16" color="gray-400" />
+            </button>
+          </row>
+
+          <row gap="2" align="center" padding="p-2" rounded="md" 
+               background="gray-50">
+            <icon name="grip-vertical" size="16" color="gray-400" />
+            <text flex="1" typography="content">번호판 사진 촬영</text>
+            <button variant="ghost" size="icon-sm">
+              <icon name="x" size="16" color="gray-400" />
+            </button>
+          </row>
+
+          <row gap="2" align="center" padding="p-2" rounded="md" 
+               background="gray-50">
+            <icon name="grip-vertical" size="16" color="gray-400" />
+            <text flex="1" typography="content">등록증 사본 준비</text>
+            <button variant="ghost" size="icon-sm">
+              <icon name="x" size="16" color="gray-400" />
+            </button>
+          </row>
+        </column>
+
+        <!-- 체크리스트 추가 입력 -->
+        <row gap="2">
+          <input type="text" placeholder="새 항목 추가..." 
+                 flex="1" height="h-12" typography="content" />
+          <button variant="ghost" size="icon">
+            <icon name="plus" size="20" />
+          </button>
+        </row>
+      </section>
+    </content>
+
+    <!-- 푸터 (액션 버튼) -->
+    <footer padding="p-6" border="top gray-200">
+      <row gap="3">
+        <button variant="outline" flex="1" height="h-14" action="cancel">
+          <text>취소</text>
+        </button>
+        <button variant="default" flex="1" height="h-14" action="save">
+          <text>저장</text>
+        </button>
+      </row>
+    </footer>
+  </dialog>
+
+  <!-- 오버레이 -->
+  <overlay background="black" opacity="50" action="closeDialog" />
+</screen>

@@ -1,14 +1,13 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { SavedLocation } from '../types';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from './ui/dialog';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-import { MapPin, Plus, Edit, Trash2, Locate, Loader2, X, Navigation } from 'lucide-react';
+import { MapPin, Plus, Edit, Trash2, Locate, Loader2, X } from 'lucide-react';
 import { toast } from 'sonner@2.0.3';
 import { Badge } from './ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 
 interface LocationSettingsViewProps {
   savedLocations: SavedLocation[];
@@ -36,13 +35,6 @@ export function LocationSettingsView({
   const [radius, setRadius] = useState(100);
   const [address, setAddress] = useState('');
   const [isGettingLocation, setIsGettingLocation] = useState(false);
-  const [selectedTab, setSelectedTab] = useState<'map' | 'manual'>('map');
-  
-  // Map related state
-  const mapContainerRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<any>(null);
-  const markerRef = useRef<any>(null);
-  const circleRef = useRef<any>(null);
 
   const handleOpenDialog = (location?: SavedLocation) => {
     if (location) {
@@ -62,166 +54,8 @@ export function LocationSettingsView({
       setRadius(100);
       setAddress('');
     }
-    setSelectedTab('map');
     setDialogOpen(true);
   };
-
-  // Initialize Leaflet map
-  useEffect(() => {
-    if (!dialogOpen || !mapContainerRef.current) return;
-
-    // Dynamically import Leaflet
-    const initMap = async () => {
-      try {
-        // Import Leaflet CSS
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-        document.head.appendChild(link);
-
-        // Import Leaflet JS
-        const L = await import('https://unpkg.com/leaflet@1.9.4/dist/leaflet.js');
-        
-        // Clear existing map
-        if (mapRef.current) {
-          mapRef.current.remove();
-        }
-
-        // Default center (Seoul, Korea)
-        const defaultLat = parseFloat(latitude) || 37.5665;
-        const defaultLng = parseFloat(longitude) || 126.9780;
-
-        // Create map
-        const map = (L as any).map(mapContainerRef.current).setView([defaultLat, defaultLng], 15);
-
-        // Add tile layer
-        (L as any).tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '© OpenStreetMap contributors',
-          maxZoom: 19,
-        }).addTo(map);
-
-        // Custom icon
-        const customIcon = (L as any).divIcon({
-          html: `<div style="font-size: 32px; text-align: center; line-height: 1; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">${icon}</div>`,
-          className: 'custom-marker',
-          iconSize: [40, 40],
-          iconAnchor: [20, 40],
-        });
-
-        // Add marker if coordinates exist
-        if (latitude && longitude) {
-          const marker = (L as any).marker([defaultLat, defaultLng], { 
-            icon: customIcon,
-            draggable: true 
-          }).addTo(map);
-
-          // Add circle for radius
-          const circle = (L as any).circle([defaultLat, defaultLng], {
-            color: '#3b82f6',
-            fillColor: '#3b82f6',
-            fillOpacity: 0.15,
-            radius: radius,
-          }).addTo(map);
-
-          markerRef.current = marker;
-          circleRef.current = circle;
-
-          // Update coordinates when marker is dragged
-          marker.on('dragend', () => {
-            const pos = marker.getLatLng();
-            setLatitude(pos.lat.toFixed(6));
-            setLongitude(pos.lng.toFixed(6));
-            circle.setLatLng(pos);
-          });
-        }
-
-        // Add click handler to place marker
-        map.on('click', (e: any) => {
-          const { lat, lng } = e.latlng;
-          setLatitude(lat.toFixed(6));
-          setLongitude(lng.toFixed(6));
-
-          // Remove existing marker and circle
-          if (markerRef.current) {
-            map.removeLayer(markerRef.current);
-          }
-          if (circleRef.current) {
-            map.removeLayer(circleRef.current);
-          }
-
-          // Add new marker
-          const marker = (L as any).marker([lat, lng], { 
-            icon: customIcon,
-            draggable: true 
-          }).addTo(map);
-
-          // Add circle
-          const circle = (L as any).circle([lat, lng], {
-            color: '#3b82f6',
-            fillColor: '#3b82f6',
-            fillOpacity: 0.15,
-            radius: radius,
-          }).addTo(map);
-
-          markerRef.current = marker;
-          circleRef.current = circle;
-
-          // Update coordinates when marker is dragged
-          marker.on('dragend', () => {
-            const pos = marker.getLatLng();
-            setLatitude(pos.lat.toFixed(6));
-            setLongitude(pos.lng.toFixed(6));
-            circle.setLatLng(pos);
-          });
-        });
-
-        mapRef.current = map;
-
-        // Force resize
-        setTimeout(() => {
-          map.invalidateSize();
-        }, 100);
-
-      } catch (error) {
-        console.error('Failed to load map:', error);
-        toast.error('지도를 불러올 수 없습니다');
-      }
-    };
-
-    initMap();
-
-    return () => {
-      if (mapRef.current) {
-        mapRef.current.remove();
-        mapRef.current = null;
-      }
-    };
-  }, [dialogOpen, icon]);
-
-  // Update circle radius when slider changes
-  useEffect(() => {
-    if (circleRef.current && mapRef.current) {
-      circleRef.current.setRadius(radius);
-    }
-  }, [radius]);
-
-  // Update marker position when coordinates change manually
-  useEffect(() => {
-    if (selectedTab !== 'manual') return;
-    
-    const lat = parseFloat(latitude);
-    const lng = parseFloat(longitude);
-    
-    if (!isNaN(lat) && !isNaN(lng) && mapRef.current) {
-      if (markerRef.current) {
-        markerRef.current.setLatLng([lat, lng]);
-        if (circleRef.current) {
-          circleRef.current.setLatLng([lat, lng]);
-        }
-        mapRef.current.setView([lat, lng], mapRef.current.getZoom());
-      }
-    }
-  }, [latitude, longitude, selectedTab]);
 
   const getCurrentLocation = () => {
     if (!navigator.geolocation) {
@@ -237,59 +71,13 @@ export function LocationSettingsView({
         setLatitude(lat.toFixed(6));
         setLongitude(lng.toFixed(6));
         setIsGettingLocation(false);
-        toast.success('현재 위치를 가져왔습니다');
-
-        // Update map view and marker
-        if (mapRef.current) {
-          mapRef.current.setView([lat, lng], 15);
-
-          // Remove existing marker and circle
-          if (markerRef.current) {
-            mapRef.current.removeLayer(markerRef.current);
-          }
-          if (circleRef.current) {
-            mapRef.current.removeLayer(circleRef.current);
-          }
-
-          // Add new marker
-          const L = (window as any).L;
-          if (L) {
-            const customIcon = L.divIcon({
-              html: `<div style="font-size: 32px; text-align: center; line-height: 1; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">${icon}</div>`,
-              className: 'custom-marker',
-              iconSize: [40, 40],
-              iconAnchor: [20, 40],
-            });
-
-            const marker = L.marker([lat, lng], { 
-              icon: customIcon,
-              draggable: true 
-            }).addTo(mapRef.current);
-
-            const circle = L.circle([lat, lng], {
-              color: '#3b82f6',
-              fillColor: '#3b82f6',
-              fillOpacity: 0.15,
-              radius: radius,
-            }).addTo(mapRef.current);
-
-            markerRef.current = marker;
-            circleRef.current = circle;
-
-            marker.on('dragend', () => {
-              const pos = marker.getLatLng();
-              setLatitude(pos.lat.toFixed(6));
-              setLongitude(pos.lng.toFixed(6));
-              circle.setLatLng(pos);
-            });
-          }
-        }
+        toast.success('✅ 현재 위치를 가져왔습니다');
       },
       (error) => {
         setIsGettingLocation(false);
         let errorMessage = '위치를 가져올 수 없습니다';
         if (error.code === error.PERMISSION_DENIED) {
-          errorMessage = '위치 권한이 거부되었습니다';
+          errorMessage = '위치 권한이 거부되었습니다. 브라우저 설정에서 위치 권한을 허용해주세요.';
         } else if (error.code === error.POSITION_UNAVAILABLE) {
           errorMessage = '위치 정보를 사용할 수 없습니다';
         } else if (error.code === error.TIMEOUT) {
@@ -320,7 +108,7 @@ export function LocationSettingsView({
     }
 
     if (lat < -90 || lat > 90 || lon < -180 || lon > 180) {
-      toast.error('좌표 범위가 올바르지 않습니다');
+      toast.error('좌표 범위가 올바르지 않습니다 (위도: -90~90, 경도: -180~180)');
       return;
     }
 
@@ -440,13 +228,13 @@ export function LocationSettingsView({
 
       {/* Add/Edit Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-hidden flex flex-col">
           <DialogHeader>
             <DialogTitle>
               {editingLocation ? '위치 수정' : '새 위치 추가'}
             </DialogTitle>
             <DialogDescription>
-              지도에서 위치를 선택하거나 직접 좌표를 입력하세요
+              GPS로 현재 위치를 가져오거나 직접 좌표를 입력하세요
             </DialogDescription>
           </DialogHeader>
 
@@ -494,115 +282,91 @@ export function LocationSettingsView({
               />
             </div>
 
-            {/* Tabs for Map and Manual Input */}
-            <Tabs value={selectedTab} onValueChange={(v) => setSelectedTab(v as 'map' | 'manual')}>
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="map" className="gap-2">
-                  <Navigation className="h-4 w-4" />
-                  지도에서 선택
-                </TabsTrigger>
-                <TabsTrigger value="manual" className="gap-2">
-                  <MapPin className="h-4 w-4" />
-                  직접 입력
-                </TabsTrigger>
-              </TabsList>
+            {/* Get Current Location Button */}
+            <div className="space-y-2">
+              <Label>위치 좌표</Label>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={getCurrentLocation}
+                disabled={isGettingLocation}
+                className="w-full active:scale-95 transition-transform"
+              >
+                {isGettingLocation ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    위치 가져오는 중...
+                  </>
+                ) : (
+                  <>
+                    <Locate className="h-4 w-4 mr-2" />
+                    🎯 GPS로 현재 위치 가져오기
+                  </>
+                )}
+              </Button>
+              <p className="text-xs text-gray-500">
+                💡 GPS를 사용하여 현재 위치의 정확한 좌표를 자동으로 입력합니다
+              </p>
+            </div>
 
-              <TabsContent value="map" className="space-y-4 mt-4">
-                {/* Get Current Location */}
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={getCurrentLocation}
-                  disabled={isGettingLocation}
-                  className="w-full active:scale-95 transition-transform"
-                >
-                  {isGettingLocation ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      위치 가져오는 중...
-                    </>
-                  ) : (
-                    <>
-                      <Locate className="h-4 w-4 mr-2" />
-                      현재 위치로 이동
-                    </>
-                  )}
-                </Button>
-
-                {/* Map Container */}
+            {/* Coordinates Input */}
+            <div className="space-y-3 p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <div className="flex items-center justify-between mb-2">
+                <Label className="text-sm">좌표 직접 입력</Label>
+                {latitude && longitude && (
+                  <Badge variant="secondary" className="text-xs">
+                    <MapPin className="h-3 w-3 mr-1" />
+                    입력됨
+                  </Badge>
+                )}
+              </div>
+              
+              <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-2">
-                  <Label>지도에서 위치 선택 (클릭하거나 마커를 드래그하세요)</Label>
-                  <div 
-                    ref={mapContainerRef} 
-                    className="w-full h-[300px] rounded-lg border border-gray-300 bg-gray-100"
+                  <Label htmlFor="latitude" className="text-xs">위도 (Latitude) *</Label>
+                  <Input
+                    id="latitude"
+                    type="number"
+                    step="0.000001"
+                    value={latitude}
+                    onChange={(e) => setLatitude(e.target.value)}
+                    placeholder="37.5665"
+                    className="font-mono text-sm"
                   />
-                  {latitude && longitude && (
-                    <p className="text-xs text-gray-500 text-center">
-                      선택된 좌표: {parseFloat(latitude).toFixed(6)}, {parseFloat(longitude).toFixed(6)}
-                    </p>
-                  )}
+                  <p className="text-xs text-gray-500">-90 ~ 90</p>
                 </div>
-              </TabsContent>
-
-              <TabsContent value="manual" className="space-y-4 mt-4">
-                {/* Get Current Location */}
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={getCurrentLocation}
-                  disabled={isGettingLocation}
-                  className="w-full active:scale-95 transition-transform"
-                >
-                  {isGettingLocation ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      위치 가져오는 중...
-                    </>
-                  ) : (
-                    <>
-                      <Locate className="h-4 w-4 mr-2" />
-                      현재 위치 사용
-                    </>
-                  )}
-                </Button>
-
-                {/* Coordinates */}
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="space-y-2">
-                    <Label htmlFor="latitude">위도 *</Label>
-                    <Input
-                      id="latitude"
-                      type="number"
-                      step="0.000001"
-                      value={latitude}
-                      onChange={(e) => setLatitude(e.target.value)}
-                      placeholder="37.5665"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="longitude">경도 *</Label>
-                    <Input
-                      id="longitude"
-                      type="number"
-                      step="0.000001"
-                      value={longitude}
-                      onChange={(e) => setLongitude(e.target.value)}
-                      placeholder="126.9780"
-                    />
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="longitude" className="text-xs">경도 (Longitude) *</Label>
+                  <Input
+                    id="longitude"
+                    type="number"
+                    step="0.000001"
+                    value={longitude}
+                    onChange={(e) => setLongitude(e.target.value)}
+                    placeholder="126.9780"
+                    className="font-mono text-sm"
+                  />
+                  <p className="text-xs text-gray-500">-180 ~ 180</p>
                 </div>
+              </div>
 
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+              {latitude && longitude && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-2">
                   <p className="text-xs text-blue-900">
-                    💡 <strong>팁:</strong> 좌표를 모르는 경우 \"현재 위치 사용\" 버튼을 눌러 현재 위치의 좌표를 자동으로 입력할 수 있습니다.
+                    ✅ <strong>현재 좌표:</strong> {parseFloat(latitude).toFixed(6)}, {parseFloat(longitude).toFixed(6)}
                   </p>
                 </div>
-              </TabsContent>
-            </Tabs>
+              )}
+            </div>
 
             {/* Radius */}
-            <div className="space-y-2">
-              <Label htmlFor="radius">감지 반경: {radius}m</Label>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="radius" className="text-base">🎯 감지 반경</Label>
+                <Badge variant="secondary" className="text-sm">
+                  {radius}m
+                </Badge>
+              </div>
               <input
                 type="range"
                 id="radius"
@@ -611,12 +375,27 @@ export function LocationSettingsView({
                 step="50"
                 value={radius}
                 onChange={(e) => setRadius(parseInt(e.target.value))}
-                className="w-full"
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
               />
               <div className="flex justify-between text-xs text-gray-500">
-                <span>50m</span>
-                <span>1000m</span>
+                <span>최소 50m</span>
+                <span>최대 1000m</span>
               </div>
+              <p className="text-xs text-gray-600">
+                💡 이 반경 안에 들어오면 알림이 울립니다
+              </p>
+            </div>
+
+            {/* Help Text */}
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+              <p className="text-xs text-yellow-900">
+                <strong>💡 사용 팁:</strong>
+              </p>
+              <ul className="text-xs text-yellow-800 mt-2 space-y-1 ml-4 list-disc">
+                <li>GPS 버튼을 누르면 현재 위치를 자동으로 가져옵니다</li>
+                <li>좌표를 직접 입력할 수도 있습니다 (Google Maps 등에서 확인 가능)</li>
+                <li>감지 반경은 50m~1000m 사이로 설정할 수 있습니다</li>
+              </ul>
             </div>
           </div>
 

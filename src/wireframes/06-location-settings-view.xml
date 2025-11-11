@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 위치 설정 화면 -->
+<screen name="LocationSettingsView" type="sheet">
+  <metadata>
+    <title>위치 관리</title>
+    <description>저장된 위치 목록을 관리하는 화면</description>
+    <trigger>메뉴 > 위치 관리, 헤더 위치 버튼</trigger>
+  </metadata>
+
+  <sheet width="full sm:max-w-md" side="right" background="white">
+    <!-- 헤더 -->
+    <header padding="p-6" border="bottom gray-200" background="white" position="sticky top-0">
+      <row align="between center">
+        <text typography="title">위치 관리</text>
+        <button variant="ghost" size="icon" action="close">
+          <icon name="x" size="20" />
+        </button>
+      </row>
+    </header>
+
+    <!-- 콘텐츠 -->
+    <content padding="p-6" space="y-6" overflow="scroll">
+      
+      <!-- 현재 위치 정보 -->
+      <section condition="locationTracking.isActive" 
+               padding="p-4" background="blue-50" rounded="xl" border="blue-200">
+        <row gap="3" align="start">
+          <icon name="map-pin" size="20" color="blue-600" animation="pulse" />
+          <column flex="1">
+            <text typography="content" color="blue-900" margin="mb-1">
+              현재 위치 추적 중
+            </text>
+            <text typography="description" color="blue-700">
+              위도: 37.5665
+            </text>
+            <text typography="description" color="blue-700">
+              경도: 126.9780
+            </text>
+            <text typography="description" color="blue-700">
+              정확도: ±50m
+            </text>
+          </column>
+        </row>
+      </section>
+
+      <!-- 저장된 위치 목록 -->
+      <section>
+        <row align="between center" margin="mb-4">
+          <text typography="content" color="gray-900">저장된 위치</text>
+          <text typography="description" color="gray-600">4개</text>
+        </row>
+
+        <column space="y-3">
+          <!-- 위치 카드 1 -->
+          <card border="gray-200">
+            <container padding="p-4">
+              <row align="between start">
+                <row gap="3" align="start" flex="1">
+                  <circle background="blue-100" size="40" align="center">
+                    <emoji>🏠</emoji>
+                  </circle>
+                  <column flex="1">
+                    <text typography="content" color="gray-900" weight="semibold">
+                      우리 집
+                    </text>
+                    <text typography="description" color="gray-600" margin="mt-1">
+                      서울시 중구 세종대로
+                    </text>
+                    <row gap="4" margin="mt-2">
+                      <row gap="1" align="center">
+                        <icon name="target" size="14" color="gray-500" />
+                        <text typography="description" color="gray-600" size="12px">
+                          100m
+                        </text>
+                      </row>
+                      <row gap="1" align="center">
+                        <icon name="map-pin" size="14" color="gray-500" />
+                        <text typography="description" color="gray-600" size="12px">
+                          37.5665, 126.9780
+                        </text>
+                      </row>
+                    </row>
+                  </column>
+                </row>
+                
+                <row gap="1">
+                  <button variant="ghost" size="icon-sm" action="editLocation">
+                    <icon name="edit" size="16" color="gray-400" />
+                  </button>
+                  <button variant="ghost" size="icon-sm" action="deleteLocation">
+                    <icon name="trash-2" size="16" color="red-400" />
+                  </button>
+                </row>
+              </row>
+            </container>
+          </card>
+
+          <!-- 위치 카드 2 -->
+          <card border="gray-200">
+            <container padding="p-4">
+              <row align="between start">
+                <row gap="3" align="start" flex="1">
+                  <circle background="green-100" size="40" align="center">
+                    <emoji>💼</emoji>
+                  </circle>
+                  <column flex="1">
+                    <text typography="content" color="gray-900" weight="semibold">
+                      회사
+                    </text>
+                    <text typography="description" color="gray-600" margin="mt-1">
+                      서울시 강남구 테헤란로
+                    </text>
+                    <row gap="4" margin="mt-2">
+                      <row gap="1" align="center">
+                        <icon name="target" size="14" color="gray-500" />
+                        <text typography="description" color="gray-600" size="12px">
+                          150m
+                        </text>
+                      </row>
+                      <row gap="1" align="center">
+                        <icon name="map-pin" size="14" color="gray-500" />
+                        <text typography="description" color="gray-600" size="12px">
+                          37.4979, 127.0276
+                        </text>
+                      </row>
+                    </row>
+                  </column>
+                </row>
+                
+                <row gap="1">
+                  <button variant="ghost" size="icon-sm">
+                    <icon name="edit" size="16" color="gray-400" />
+                  </button>
+                  <button variant="ghost" size="icon-sm">
+                    <icon name="trash-2" size="16" color="red-400" />
+                  </button>
+                </row>
+              </row>
+            </container>
+          </card>
+
+          <!-- 위치 카드 3, 4 생략 -->
+        </column>
+      </section>
+
+      <!-- 새 위치 추가 폼 -->
+      <section>
+        <text typography="content" color="gray-900" margin="mb-4">새 위치 추가</text>
+        
+        <card padding="p-4" border="gray-200">
+          <column space="y-4">
+            <!-- GPS 버튼 -->
+            <button variant="outline" width="w-full" height="h-12" action="getCurrentLocation">
+              <icon name="navigation" size="20" />
+              <text>GPS 현재 위치 가져오기</text>
+            </button>
+
+            <separator>
+              <text typography="description" color="gray-500">또는</text>
+            </separator>
+
+            <!-- 수동 입력 -->
+            <column space="y-3">
+              <!-- 이름 -->
+              <form-group>
+                <label>이름</label>
+                <input type="text" placeholder="예: 우리 집" 
+                       height="h-12" typography="content" />
+              </form-group>
+
+              <!-- 아이콘 선택 -->
+              <form-group>
+                <label>아이콘</label>
+                <grid columns="6" gap="2">
+                  <button variant="ghost" size="icon" selected="true" 
+                          border="2 primary" background="blue-50">
+                    <emoji>🏠</emoji>
+                  </button>
+                  <button variant="ghost" size="icon">
+                    <emoji>💼</emoji>
+                  </button>
+                  <button variant="ghost" size="icon">
+                    <emoji>🎮</emoji>
+                  </button>
+                  <button variant="ghost" size="icon">
+                    <emoji>🏋️</emoji>
+                  </button>
+                  <button variant="ghost" size="icon">
+                    <emoji>🛒</emoji>
+                  </button>
+                  <button variant="ghost" size="icon">
+                    <emoji>☕</emoji>
+                  </button>
+                </grid>
+              </form-group>
+
+              <!-- 좌표 입력 -->
+              <row gap="3">
+                <form-group flex="1">
+                  <label>위도</label>
+                  <input type="number" placeholder="37.5665" 
+                         height="h-12" typography="content" 
+                         step="0.0001" />
+                </form-group>
+                <form-group flex="1">
+                  <label>경도</label>
+                  <input type="number" placeholder="126.9780" 
+                         height="h-12" typography="content" 
+                         step="0.0001" />
+                </form-group>
+              </row>
+
+              <!-- 반경 설정 -->
+              <form-group>
+                <label>반경 (미터)</label>
+                <row gap="3" align="center">
+                  <slider min="50" max="500" step="10" value="100" flex="1" />
+                  <text typography="content" color="gray-900" width="w-16">
+                    100m
+                  </text>
+                </row>
+                <text typography="description" color="gray-600" margin="mt-2">
+                  이 반경 안에 들어오면 알림이 표시됩니다
+                </text>
+              </form-group>
+
+              <!-- 주소 (선택사항) -->
+              <form-group>
+                <label>주소 (선택사항)</label>
+                <input type="text" placeholder="예: 서울시 중구 세종대로" 
+                       height="h-12" typography="content" />
+              </form-group>
+            </column>
+
+            <!-- 저장 버튼 -->
+            <button variant="default" width="w-full" height="h-14" action="saveLocation">
+              <icon name="save" size="20" />
+              <text>저장</text>
+            </button>
+          </column>
+        </card>
+      </section>
+
+      <!-- 도움말 -->
+      <section padding="p-4" background="gray-50" rounded="lg">
+        <row gap="2" align="start">
+          <icon name="help-circle" size="20" color="gray-500" />
+          <column flex="1" space="y-2">
+            <text typography="description" color="gray-700">
+              <strong>팁:</strong> GPS 위치는 실시간으로 업데이트됩니다.
+            </text>
+            <text typography="description" color="gray-700">
+              수동으로 좌표를 입력할 때는 Google Maps에서 좌표를 복사할 수 있습니다.
+            </text>
+          </column>
+        </row>
+      </section>
+    </content>
+  </sheet>
+
+  <!-- 오버레이 -->
+  <overlay background="black" opacity="30" action="closeSheet" />
+</screen>
